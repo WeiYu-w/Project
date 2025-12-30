@@ -9,20 +9,37 @@
 </head>
 <body>
     <nav><a href="/" class="logo">食光地圖</a></nav>
+
     <div class="post-box">
         <h2>📮 投稿新餐廳</h2>
-        <label>餐廳名稱</label><input type="text" id="pName">
-        <label>詳細地址</label><input type="text" id="pAddr" placeholder="台北市信義區...">
-        <label>聯絡電話</label><input type="text" id="pPhone">
-        <label>美食圖片網址</label><input type="text" id="pImg" placeholder="貼上 jpg/png 圖片連結">
-        <label>推薦原因</label><textarea id="pDesc"></textarea>
+
+        <label>餐廳名稱</label>
+        <input type="text" id="pName" placeholder="例如：鼎泰豐">
+
+        <label>詳細地址</label>
+        <input type="text" id="pAddr" placeholder="台北市信義區...">
+
+        <label>聯絡電話</label>
+        <input type="text" id="pPhone" placeholder="02-1234-5678">
+
+        <label>美食圖片網址</label>
+        <input type="text" id="pImg" placeholder="貼上 jpg/png 圖片連結">
+
+        <label>推薦原因</label>
+        <textarea id="pDesc" placeholder="例如：小籠包爆汁，服務也很好"></textarea>
+
         <button onclick="publish()" class="btn-publish">確認發布</button>
     </div>
 
     <script>
+        // ✅ 統一把「臺」改成「台」，避免城市比對/搜尋不一致
+        function toTai(s) {
+            return (s || '').replaceAll('臺', '台').trim();
+        }
+
         async function publish() {
             const name = document.getElementById('pName').value.trim();
-            const addr = document.getElementById('pAddr').value.trim();
+            let addr = document.getElementById('pAddr').value.trim();
 
             // ✅ 前端防呆：至少要有名稱+地址
             if (!name || !addr) {
@@ -30,16 +47,21 @@
                 return;
             }
 
+            // ✅ 地址統一用「台」
+            addr = toTai(addr);
+
+            // ⚠️ 目前先沿用你的 substring 方式
+            // 注意：這種方法假設縣市是 3 字、區是 3 字（例如台北市信義區）
+            // 之後如果要支援「新竹縣竹北市」這種，就要再升級解析法
+            const city = addr.substring(0, 3);
+            const district = addr.substring(3, 6);
+
             const data = {
                 name,
                 address: addr,
                 phone: document.getElementById('pPhone').value.trim(),
-
-                // ⚠️ 你目前用 substring 切縣市/區：只適合「台北市信義區」這種固定長度
-                // 先保留你的寫法（能用就好），之後你想再改成更準的方式我再幫你升級
-                city: addr.substring(0, 3),
-                district: addr.substring(3, 6),
-
+                city,
+                district,
                 image_url: document.getElementById('pImg').value.trim(),
                 description: document.getElementById('pDesc').value.trim()
             };
@@ -55,11 +77,10 @@
             try {
                 result = await res.json();
             } catch (e) {
-                // 如果後端沒回 JSON，避免整個爆掉
                 result = { success: false, message: '伺服器回應格式錯誤' };
             }
 
-            // ✅ 用 res.ok + success 雙保險
+            // ✅ 用 res.ok + success 雙保險（後端回 400 也能正確提示）
             if (!res.ok || !result.success) {
                 alert(result.message || '投稿失敗，請稍後再試');
                 return;

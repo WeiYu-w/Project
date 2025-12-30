@@ -34,9 +34,9 @@ const normalize = (s) => {
         .toLowerCase();
 };
 
-// 地址正規化：順便把「台」統一成「臺」(你資料若本來都用台也可以反過來)
+// 地址正規化：順便把「臺」統一成「台」
 const normalizeAddress = (s) => {
-    return normalize(s).replaceAll('台', '臺');
+    return normalize(s).replaceAll('臺', '台');
 };
 
 // 取得所有餐廳資料
