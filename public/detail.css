@@ -1,0 +1,9 @@
+.detail-flex { display: flex; gap: 40px; margin-top: 20px; flex-wrap: wrap; }
+.info-panel { flex: 1; min-width: 320px; background: white; padding: 40px; border-radius: 20px; }
+h1 { font-size: 2.2rem; color: var(--brown); margin: 0 0 20px 0; }
+.btn-group { display: flex; gap: 15px; margin-top: 30px; }
+.btn { flex: 1; padding: 14px; border-radius: 50px; text-align: center; text-decoration: none; font-size: 14px; transition: 0.3s; }
+.btn-map { background: var(--sage); color: white; }
+.btn-phone { border: 1px solid var(--sage); color: var(--sage); }
+.comment-section { margin-top: 50px; padding: 30px; background: white; border-radius: 20px; }
+.comment-item { padding: 15px 0; border-bottom: 1px solid #f2f2f2; }

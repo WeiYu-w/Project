@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title><%= rest.name %> | 詳情</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/index.css">
+    <link rel="stylesheet" href="/detail.css">
+</head>
+<body>
+    <nav><a href="/" class="logo">食光地圖</a></nav>
+    <div class="container">
+        <div class="detail-flex">
+            <div style="flex:1; min-width:320px; border-radius:20px; overflow:hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+                <img src="<%= rest.image_url %>" alt="<%= rest.name %>" style="width:100%; display:block;">
+            </div>
+            <div class="info-panel">
+                <h1><%= rest.name %></h1>
+                <p class="description"><%= rest.description %></p>
+                <hr style="border:0; border-top:1px solid #f2f2f2; margin:20px 0;">
+                <p>📍 地址：<%= rest.address %></p>
+                <p>📞 電話：<%= rest.phone %></p>
+                <div class="btn-group">
+                    <a href="https://www.google.com/maps/search/?api=1&query=<%= encodeURIComponent(rest.address) %>" target="_blank" class="btn btn-map">地圖導航</a>
+                    <a href="tel:<%= rest.phone %>" class="btn btn-phone">撥打電話</a>
+                </div>
+            </div>
+        </div>
+        <div class="comment-section">
+            <h3>💬 留言評論</h3>
+            <div id="commentList">
+                <% rest.comments.reverse().forEach(c => { %>
+                    <div class="comment-item"><%= c.text %> <small style="float:right;"><%= c.date %></small></div>
+                <% }) %>
+            </div>
+            <div class="input-group">
+                <input type="text" id="msg" placeholder="分享你的食記...">
+                <button onclick="sendMsg()" class="btn-send">送出</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        async function sendMsg() {
+            const text = document.getElementById('msg').value;
+            if(!text) return;
+            await fetch(`/api/restaurants/<%= rest.id %>/comments`, {
+                method:'POST', headers:{'Content-Type':'application/json'},
+                body: JSON.stringify({text})
+            });
+            location.reload();
+        }
+    </script>
+</body>
+</html>

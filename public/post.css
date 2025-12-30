@@ -1,0 +1,5 @@
+.post-box { background: white; padding: 40px; border-radius: 25px; max-width: 500px; margin: 50px auto; box-shadow: 0 10px 30px rgba(0,0,0,0.03); }
+h2 { color: var(--sage); text-align: center; margin-bottom: 30px; }
+label { display: block; margin-bottom: 8px; font-weight: 600; color: var(--brown); }
+input, textarea { width: 100%; padding: 12px; margin-bottom: 20px; border: 1px solid #eee; border-radius: 10px; box-sizing: border-box; background: #fdfcf8; }
+.btn-publish { width: 100%; padding: 15px; background: var(--sage); color: white; border: none; border-radius: 10px; cursor: pointer; font-size: 16px; }

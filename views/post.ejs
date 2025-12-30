@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>投稿餐廳</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/index.css">
+    <link rel="stylesheet" href="/post.css">
+</head>
+<body>
+    <nav><a href="/" class="logo">食光地圖</a></nav>
+    <div class="post-box">
+        <h2>📮 投稿新餐廳</h2>
+        <label>餐廳名稱</label><input type="text" id="pName">
+        <label>詳細地址</label><input type="text" id="pAddr" placeholder="台北市信義區...">
+        <label>聯絡電話</label><input type="text" id="pPhone">
+        <label>美食圖片網址</label><input type="text" id="pImg" placeholder="貼上 jpg/png 圖片連結">
+        <label>推薦原因</label><textarea id="pDesc"></textarea>
+        <button onclick="publish()" class="btn-publish">確認發布</button>
+    </div>
+    <script>
+        async function publish() {
+            const addr = document.getElementById('pAddr').value;
+            const city = addr.substring(0, 3);
+            const district = addr.substring(3, 6);
+            
+            const data = {
+                name: document.getElementById('pName').value,
+                address: addr, phone: document.getElementById('pPhone').value,
+                city, district,
+                image_url: document.getElementById('pImg').value,
+                description: document.getElementById('pDesc').value
+            };
+            await fetch('/api/restaurants', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data) });
+            alert('投稿成功！'); location.href='/';
+        }
+    </script>
+</body>
+</html>
