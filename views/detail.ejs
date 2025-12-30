@@ -7,46 +7,106 @@
     <link rel="stylesheet" href="/index.css">
     <link rel="stylesheet" href="/detail.css">
 </head>
+
 <body>
-    <nav><a href="/" class="logo">食光地圖</a></nav>
+    <!-- 導覽列，點 logo 回首頁 -->
+    <nav>
+        <a href="/" class="logo">全台食光地圖</a>
+    </nav>
+
+    <!-- 主內容容器 -->
     <div class="container">
+
+        <!-- 上半部：圖片 + 餐廳資訊 -->
         <div class="detail-flex">
-            <div style="flex:1; min-width:320px; border-radius:20px; overflow:hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
-                <img src="<%= rest.image_url %>" alt="<%= rest.name %>" style="width:100%; display:block;">
+
+            <!-- 餐廳圖片區 -->
+            <div style="flex:1; min-width:320px; border-radius:20px;
+                        overflow:hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+                <img src="<%= rest.image_url %>"
+                     alt="<%= rest.name %>"
+                     style="width:100%; display:block;">
             </div>
+
+            <!-- 右側資訊欄 -->
             <div class="info-panel">
+
+                <!-- 餐廳名稱 -->
                 <h1><%= rest.name %></h1>
+
+                <!-- 推薦描述 -->
                 <p class="description"><%= rest.description %></p>
+
+                <!-- 分隔線 -->
                 <hr style="border:0; border-top:1px solid #f2f2f2; margin:20px 0;">
+
+                <!-- 地址與電話 -->
                 <p>📍 地址：<%= rest.address %></p>
                 <p>📞 電話：<%= rest.phone %></p>
+
+                <!-- 功能按鈕 -->
                 <div class="btn-group">
-                    <a href="https://www.google.com/maps/search/?api=1&query=<%= encodeURIComponent(rest.address) %>" target="_blank" class="btn btn-map">地圖導航</a>
-                    <a href="tel:<%= rest.phone %>" class="btn btn-phone">撥打電話</a>
+
+                    <!-- Google 地圖導航 -->
+                    <a href="https://www.google.com/maps/search/?api=1&query=<%= encodeURIComponent(rest.address) %>"
+                       target="_blank"
+                       class="btn btn-map">
+                        地圖導航
+                    </a>
+
+                    <!-- 直接撥打電話（手機用） -->
+                    <a href="tel:<%= rest.phone %>"
+                       class="btn btn-phone">
+                        撥打電話
+                    </a>
                 </div>
             </div>
         </div>
+
+        <!-- 留言區 -->
         <div class="comment-section">
             <h3>💬 留言評論</h3>
+
+            <!-- 留言清單 -->
             <div id="commentList">
+
+                <!-- EJS：倒序顯示留言（最新在最上面） -->
                 <% rest.comments.reverse().forEach(c => { %>
-                    <div class="comment-item"><%= c.text %> <small style="float:right;"><%= c.date %></small></div>
+                    <div class="comment-item">
+                        <%= c.text %>
+                        <small style="float:right;"><%= c.date %></small>
+                    </div>
                 <% }) %>
+
             </div>
+
+            <!-- 留言輸入區 -->
             <div class="input-group">
                 <input type="text" id="msg" placeholder="分享你的食記...">
                 <button onclick="sendMsg()" class="btn-send">送出</button>
             </div>
         </div>
     </div>
+
+    <!-- JavaScript -->
     <script>
+        // 送出留言
         async function sendMsg() {
+
+            // 取得輸入的留言文字
             const text = document.getElementById('msg').value;
-            if(!text) return;
+
+            // 如果沒輸入內容就不送出
+            if (!text) return;
+
+            // 呼叫後端 API，新增留言
             await fetch(`/api/restaurants/<%= rest.id %>/comments`, {
-                method:'POST', headers:{'Content-Type':'application/json'},
-                body: JSON.stringify({text})
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text })
             });
+
+            // 重新整理頁面，顯示最新留言
             location.reload();
         }
     </script>

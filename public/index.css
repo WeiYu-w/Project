@@ -1,48 +1,112 @@
+/* ==============================
+   全站顏色變數
+   ============================== */
 :root {
-    --sage: #8da399;
-    --brown: #6b5b52;
-    --warm-white: #fdfcf8;
-    --accent: #d4a373;
-    --text: #4a4a4a;
+    --sage: #8da399;       /* 主綠色 / 按鈕、logo */
+    --brown: #6b5b52;      /* 深咖啡 / 標題文字 */
+    --warm-white: #fdfcf8; /* 背景色 */
+    --accent: #d4a373;     /* 點綴色，可用於重點或 hover */
+    --text: #4a4a4a;       /* 一般文字顏色 */
 }
 
+/* ==============================
+   全站基本樣式
+   ============================== */
 body {
-    background-color: var(--warm-white);
-    color: var(--text);
-    font-family: "Noto Serif TC", serif;
-    margin: 0;
-    line-height: 1.7;
+    background-color: var(--warm-white);  /* 背景 */
+    color: var(--text);                   /* 文字 */
+    font-family: "Noto Serif TC", serif;  /* 字型 */
+    margin: 0;                             /* 去掉預設外距 */
+    line-height: 1.7;                      /* 行距 */
 }
 
+/* ==============================
+   導覽列
+   ============================== */
 nav {
     background: white;
     padding: 20px 50px;
-    display: flex;
-    justify-content: space-between;
+    display: flex;                     /* 水平排列 logo + 按鈕 */
+    justify-content: space-between;    /* 左右對齊 */
     align-items: center;
-    border-bottom: 1px solid rgba(0,0,0,0.05);
-    position: sticky; top: 0; z-index: 100;
+    border-bottom: 1px solid rgba(0,0,0,0.05); /* 淡淡分隔線 */
+    position: sticky; top: 0; z-index: 100;    /* 滾動時固定在頂部 */
 }
 
-.logo { font-size: 1.6rem; color: var(--sage); font-weight: 600; text-decoration: none; letter-spacing: 2px; }
+/* logo 樣式 */
+.logo {
+    font-size: 1.6rem;
+    color: var(--sage);
+    font-weight: 600;
+    text-decoration: none;
+    letter-spacing: 2px;
+}
 
-.container { max-width: 1100px; margin: 40px auto; padding: 0 20px; }
+/* ==============================
+   主容器
+   ============================== */
+.container {
+    max-width: 1100px;   /* 最大寬度 */
+    margin: 40px auto;   /* 上下 40px，左右置中 */
+    padding: 0 20px;     /* 左右內距 20px */
+}
 
-.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 35px; }
+/* ==============================
+   餐廳卡片網格
+   ============================== */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); /* 自動排滿列，最小 320px */
+    gap: 35px;  /* 卡片間距 */
+}
 
+/* 單一餐廳卡片 */
 .rest-card {
-    background: white; border-radius: 15px; overflow: hidden;
-    border: 1px solid rgba(0,0,0,0.03); cursor: pointer; transition: 0.3s;
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    border: 1px solid rgba(0,0,0,0.03);
+    cursor: pointer;
+    transition: 0.3s;
 }
 
-.rest-card:hover { transform: translateY(-8px); box-shadow: 0 15px 30px rgba(141, 163, 153, 0.15); }
+/* hover 動畫 */
+.rest-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 30px rgba(141, 163, 153, 0.15);
+}
 
-.ig-placeholder { background: #f9f9f9; min-height: 400px; }
+/* 圖片區 placeholder */
+.ig-placeholder {
+    background: #f9f9f9;
+    min-height: 400px;
+}
 
-.card-content { padding: 20px; }
+/* 文字內容區 */
+.card-content {
+    padding: 20px;
+}
 
-.tag { background: #f2f2f2; color: var(--sage); padding: 4px 10px; border-radius: 4px; font-size: 12px; margin-right: 8px; }
+/* 城市 / 區域標籤 */
+.tag {
+    background: #f2f2f2;
+    color: var(--sage);
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    margin-right: 8px;
+}
 
-h4 { font-size: 1.2rem; color: var(--brown); margin: 15px 0 5px; }
+/* 餐廳名稱 */
+h4 {
+    font-size: 1.2rem;
+    color: var(--brown);
+    margin: 15px 0 5px;
+}
 
-.address-text { font-size: 13px; color: #999; margin: 0; }
+/* 地址文字 */
+.address-text {
+    font-size: 13px;
+    color: #999;
+    margin: 0;
+}

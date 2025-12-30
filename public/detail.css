@@ -1,9 +1,71 @@
-.detail-flex { display: flex; gap: 40px; margin-top: 20px; flex-wrap: wrap; }
-.info-panel { flex: 1; min-width: 320px; background: white; padding: 40px; border-radius: 20px; }
-h1 { font-size: 2.2rem; color: var(--brown); margin: 0 0 20px 0; }
-.btn-group { display: flex; gap: 15px; margin-top: 30px; }
-.btn { flex: 1; padding: 14px; border-radius: 50px; text-align: center; text-decoration: none; font-size: 14px; transition: 0.3s; }
-.btn-map { background: var(--sage); color: white; }
-.btn-phone { border: 1px solid var(--sage); color: var(--sage); }
-.comment-section { margin-top: 50px; padding: 30px; background: white; border-radius: 20px; }
-.comment-item { padding: 15px 0; border-bottom: 1px solid #f2f2f2; }
+/* ==============================
+   上半部圖片 + 資訊區
+   ============================== */
+.detail-flex {
+    display: flex;       /* 左右排列圖片和資訊欄 */
+    gap: 40px;           /* 左右間距 40px */
+    margin-top: 20px;    /* 距離上方 20px */
+    flex-wrap: wrap;     /* 當螢幕太小時換行 */
+}
+
+.info-panel {
+    flex: 1;             /* 自動撐滿剩餘空間 */
+    min-width: 320px;    /* 最小寬度 320px */
+    background: white;   /* 白底 */
+    padding: 40px;       /* 內距 40px */
+    border-radius: 20px; /* 圓角 */
+}
+
+/* 餐廳名稱 */
+h1 {
+    font-size: 2.2rem;       /* 字體大小 */
+    color: var(--brown);      /* 使用變數顏色 */
+    margin: 0 0 20px 0;       /* 下方留 20px */
+}
+
+/* ==============================
+   功能按鈕組
+   ============================== */
+.btn-group {
+    display: flex;     /* 左右排列按鈕 */
+    gap: 15px;         /* 按鈕間距 15px */
+    margin-top: 30px;  /* 與上方資訊間距 */
+}
+
+.btn {
+    flex: 1;                /* 按鈕平均分配空間 */
+    padding: 14px;          /* 上下左右內距 14px */
+    border-radius: 50px;    /* 圓形按鈕 */
+    text-align: center;     /* 文字置中 */
+    text-decoration: none;  /* 去掉底線 */
+    font-size: 14px;        /* 文字大小 */
+    transition: 0.3s;       /* 滑鼠 hover 時過渡效果 */
+}
+
+/* 地圖按鈕 */
+.btn-map {
+    background: var(--sage); /* 綠色背景 */
+    color: white;            /* 白字 */
+}
+
+/* 電話按鈕 */
+.btn-phone {
+    border: 1px solid var(--sage); /* 綠色邊框 */
+    color: var(--sage);            /* 綠字 */
+}
+
+/* ==============================
+   留言區
+   ============================== */
+.comment-section {
+    margin-top: 50px;      /* 距離上方 50px */
+    padding: 30px;         /* 內距 30px */
+    background: white;     /* 白底 */
+    border-radius: 20px;   /* 圓角 */
+}
+
+/* 單筆留言 */
+.comment-item {
+    padding: 15px 0;           /* 上下內距 15px */
+    border-bottom: 1px solid #f2f2f2; /* 底部分隔線 */
+}

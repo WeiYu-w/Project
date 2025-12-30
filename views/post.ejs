@@ -18,21 +18,55 @@
         <label>推薦原因</label><textarea id="pDesc"></textarea>
         <button onclick="publish()" class="btn-publish">確認發布</button>
     </div>
+
     <script>
         async function publish() {
-            const addr = document.getElementById('pAddr').value;
-            const city = addr.substring(0, 3);
-            const district = addr.substring(3, 6);
-            
+            const name = document.getElementById('pName').value.trim();
+            const addr = document.getElementById('pAddr').value.trim();
+
+            // ✅ 前端防呆：至少要有名稱+地址
+            if (!name || !addr) {
+                alert('請至少填寫「餐廳名稱」與「詳細地址」');
+                return;
+            }
+
             const data = {
-                name: document.getElementById('pName').value,
-                address: addr, phone: document.getElementById('pPhone').value,
-                city, district,
-                image_url: document.getElementById('pImg').value,
-                description: document.getElementById('pDesc').value
+                name,
+                address: addr,
+                phone: document.getElementById('pPhone').value.trim(),
+
+                // ⚠️ 你目前用 substring 切縣市/區：只適合「台北市信義區」這種固定長度
+                // 先保留你的寫法（能用就好），之後你想再改成更準的方式我再幫你升級
+                city: addr.substring(0, 3),
+                district: addr.substring(3, 6),
+
+                image_url: document.getElementById('pImg').value.trim(),
+                description: document.getElementById('pDesc').value.trim()
             };
-            await fetch('/api/restaurants', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data) });
-            alert('投稿成功！'); location.href='/';
+
+            const res = await fetch('/api/restaurants', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            // ✅ 不管成功/失敗，都嘗試讀訊息
+            let result = {};
+            try {
+                result = await res.json();
+            } catch (e) {
+                // 如果後端沒回 JSON，避免整個爆掉
+                result = { success: false, message: '伺服器回應格式錯誤' };
+            }
+
+            // ✅ 用 res.ok + success 雙保險
+            if (!res.ok || !result.success) {
+                alert(result.message || '投稿失敗，請稍後再試');
+                return;
+            }
+
+            alert(result.message || '投稿成功！');
+            location.href = '/';
         }
     </script>
 </body>
