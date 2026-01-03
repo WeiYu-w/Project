@@ -10,7 +10,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // ===== 資料位置 =====
-const DATA_PATH = path.join(__dirname, 'data', 'restaurants.json');
+const DATA_PATH = path.join(__dirname, 'data', 'restaurants.json'); //將資料儲存在restaurants.json
 if (!fs.existsSync(path.join(__dirname, 'data'))) fs.mkdirSync(path.join(__dirname, 'data'));
 if (!fs.existsSync(DATA_PATH)) fs.writeFileSync(DATA_PATH, '[]');
 
