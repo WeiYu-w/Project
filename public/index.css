@@ -1,48 +1,122 @@
+/* =========================
+   全站色彩變數（方便統一管理）
+   ========================= */
 :root {
-    --sage: #8da399;
-    --brown: #6b5b52;
-    --warm-white: #fdfcf8;
-    --accent: #d4a373;
-    --text: #4a4a4a;
+    --sage: #8da399;        /* 主色：鼠尾草綠，整體風格主軸 */
+    --brown: #6b5b52;       /* 深棕色，用於標題文字 */
+    --warm-white: #fdfcf8;  /* 暖白色，作為背景色 */
+    --accent: #d4a373;      /* 點綴色（目前可用於強調元素） */
+    --text: #4a4a4a;        /* 主要文字顏色 */
 }
 
+/* =========================
+   全站基本設定
+   ========================= */
 body {
-    background-color: var(--warm-white);
-    color: var(--text);
-    font-family: "Noto Serif TC", serif;
-    margin: 0;
-    line-height: 1.7;
+    background-color: var(--warm-white); /* 頁面背景 */
+    color: var(--text);                  /* 預設文字顏色 */
+    font-family: "Noto Serif TC", serif; /* 中文襯線字體 */
+    margin: 0;                           /* 移除瀏覽器預設邊距 */
+    line-height: 1.7;                    /* 行距，提升閱讀性 */
 }
 
+/* =========================
+   導覽列（Navbar）
+   ========================= */
 nav {
-    background: white;
-    padding: 20px 50px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid rgba(0,0,0,0.05);
-    position: sticky; top: 0; z-index: 100;
+    background: white;                          /* 導覽列背景 */
+    padding: 20px 50px;                         /* 內距 */
+    display: flex;                              /* 使用 Flex 排版 */
+    justify-content: space-between;             /* 左右分散 */
+    align-items: center;                        /* 垂直置中 */
+    border-bottom: 1px solid rgba(0,0,0,0.05);  /* 底線分隔 */
+    position: sticky;                           /* 捲動時固定在頂部 */
+    top: 0;
+    z-index: 100;                               /* 避免被其他元素蓋住 */
 }
 
-.logo { font-size: 1.6rem; color: var(--sage); font-weight: 600; text-decoration: none; letter-spacing: 2px; }
+/* 網站 Logo 樣式 */
+.logo {
+    font-size: 1.6rem;          /* 字體大小 */
+    color: var(--sage);         /* 主色 */
+    font-weight: 600;           /* 字重 */
+    text-decoration: none;      /* 移除底線 */
+    letter-spacing: 2px;        /* 字距 */
+}
 
-.container { max-width: 1100px; margin: 40px auto; padding: 0 20px; }
+/* =========================
+   主要內容容器
+   ========================= */
+.container {
+    max-width: 1100px;          /* 最大寬度 */
+    margin: 40px auto;          /* 上下間距 + 水平置中 */
+    padding: 0 20px;            /* 手機版留白 */
+}
 
-.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 35px; }
+/* =========================
+   餐廳卡片 Grid 排版
+   ========================= */
+.grid {
+    display: grid;                                       /* 使用 Grid */
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    /* 自動排欄，最小 320px，最大 1fr */
+    gap: 35px;                                           /* 卡片間距 */
+}
 
+/* =========================
+   單一餐廳卡片
+   ========================= */
 .rest-card {
-    background: white; border-radius: 15px; overflow: hidden;
-    border: 1px solid rgba(0,0,0,0.03); cursor: pointer; transition: 0.3s;
+    background: white;                         /* 卡片背景 */
+    border-radius: 15px;                       /* 圓角 */
+    overflow: hidden;                          /* 超出內容隱藏 */
+    border: 1px solid rgba(0,0,0,0.03);        /* 淡淡邊框 */
+    cursor: pointer;                           /* 滑鼠指標 */
+    transition: 0.3s;                          /* 動畫過渡 */
 }
 
-.rest-card:hover { transform: translateY(-8px); box-shadow: 0 15px 30px rgba(141, 163, 153, 0.15); }
+/* 卡片滑鼠懸停效果 */
+.rest-card:hover {
+    transform: translateY(-8px);               /* 微微往上浮 */
+    box-shadow: 0 15px 30px rgba(141, 163, 153, 0.15);
+    /* 陰影營造 IG 網美感 */
+}
 
-.ig-placeholder { background: #f9f9f9; min-height: 400px; }
+/* =========================
+   IG 圖片佔位區
+   ========================= */
+.ig-placeholder {
+    background: #f9f9f9;   /* 圖片未載入前的背景 */
+    min-height: 400px;     /* 固定高度，維持版面 */
+}
 
-.card-content { padding: 20px; }
+/* =========================
+   卡片文字內容區
+   ========================= */
+.card-content {
+    padding: 20px;         /* 內距 */
+}
 
-.tag { background: #f2f2f2; color: var(--sage); padding: 4px 10px; border-radius: 4px; font-size: 12px; margin-right: 8px; }
+/* 標籤樣式（例如：日式、咖啡廳） */
+.tag {
+    background: #f2f2f2;   /* 淺灰背景 */
+    color: var(--sage);    /* 主色文字 */
+    padding: 4px 10px;     /* 內距 */
+    border-radius: 4px;    /* 小圓角 */
+    font-size: 12px;       /* 小字 */
+    margin-right: 8px;     /* 標籤間距 */
+}
 
-h4 { font-size: 1.2rem; color: var(--brown); margin: 15px 0 5px; }
+/* 餐廳名稱 */
+h4 {
+    font-size: 1.2rem;     /* 標題大小 */
+    color: var(--brown);   /* 深棕色 */
+    margin: 15px 0 5px;    /* 上下間距 */
+}
 
-.address-text { font-size: 13px; color: #999; margin: 0; }
+/* 地址文字 */
+.address-text {
+    font-size: 13px;       /* 小字 */
+    color: #999;           /* 淺灰色 */
+    margin: 0;             /* 移除預設間距 */
+}
