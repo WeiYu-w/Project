@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="/post.css">
 </head>
 <body>
-    <nav><a href="/" class="logo">食光地圖</a></nav>
+    <nav><a href="/" class="logo">城市餐桌</a></nav>
 
     <div class="post-box">
         <h2>📮 投稿新餐廳</h2>
@@ -50,9 +50,8 @@
             // ✅ 地址統一用「台」
             addr = toTai(addr);
 
-            // ⚠️ 目前先沿用你的 substring 方式
-            // 注意：這種方法假設縣市是 3 字、區是 3 字（例如台北市信義區）
-            // 之後如果要支援「新竹縣竹北市」這種，就要再升級解析法
+            // 用 substring 方式判斷縣市及區域
+            // 注意：這種方法是假設縣市為 3 字、區是 3 字（例如台北市信義區）
             const city = addr.substring(0, 3);
             const district = addr.substring(3, 6);
 
