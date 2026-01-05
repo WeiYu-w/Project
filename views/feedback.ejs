@@ -1,15 +1,31 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
+  <!-- 網頁編碼，避免中文亂碼 -->
   <meta charset="UTF-8">
+
+  <!-- RWD 響應式設定（手機也能正常顯示） -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- 分頁標題 -->
   <title>回報建議 | 城市餐桌</title>
+
+  <!-- Google 字體（繁中） -->
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- 共用樣式 -->
   <link rel="stylesheet" href="/index.css">
+
+  <!-- 回報頁專用樣式 -->
   <link rel="stylesheet" href="/feedback.css">
 </head>
 
 <body>
+  <!-- =========================
+       導覽列
+       - 左側 Logo 回首頁
+       - 右側：回首頁 / 我要投稿
+  ========================== -->
   <nav>
     <a href="/" class="logo">城市餐桌</a>
     <div class="nav-actions">
@@ -18,11 +34,16 @@
     </div>
   </nav>
 
+  <!-- =========================
+       主容器
+       包含回報/建議表單卡片
+  ========================== -->
   <div class="container">
     <div class="fb-card">
       <h2 class="fb-title">🛠️ 問題回報 / 建議</h2>
       <p class="fb-sub">如果是 bug，建議附上截圖更好抓問題。</p>
 
+      <!-- 類型選擇 -->
       <label class="fb-label">類型</label>
       <select id="fbType" class="fb-input">
         <option value="bug">問題回報（Bug）</option>
@@ -30,75 +51,112 @@
         <option value="other">其他</option>
       </select>
 
+      <!-- 標題（必填） -->
       <label class="fb-label">標題（必填）</label>
       <input id="fbTitle" class="fb-input" type="text" maxlength="60" placeholder="請簡要說明回報標題">
 
+      <!-- 內容描述（必填） -->
       <label class="fb-label">內容描述（必填）</label>
       <textarea id="fbDesc" class="fb-input fb-textarea" maxlength="1000" placeholder="請描述遇到的問題或建議功能"></textarea>
 
+      <!-- 截圖上傳（選填） -->
       <label class="fb-label">Bug 截圖（選填，5MB 內）</label>
       <input id="fbShot" class="fb-input" type="file" accept="image/*">
+
+      <!-- 截圖預覽區（預設隱藏） -->
       <div class="shot-preview-wrap" id="shotWrap" style="display:none;">
         <img id="shotPreview" alt="截圖預覽">
       </div>
 
+      <!-- 聯絡方式（選填） -->
       <label class="fb-label">聯絡方式（選填）</label>
       <input id="fbContact" class="fb-input" type="text" placeholder="Email / IG（可留空）">
 
+      <!-- 送出按鈕 -->
       <button id="fbSubmit" class="fb-btn" type="button">送出</button>
 
+      <!-- 顯示送出成功/失敗訊息用 -->
       <p class="fb-hint" id="fbHint"></p>
     </div>
   </div>
 
   <script>
+    /**
+     * 簡化寫法：用 $('id') 取得元素
+     * 例如：$('fbTitle') 等同於 document.getElementById('fbTitle')
+     */
     const $ = (id) => document.getElementById(id);
 
-    // ✅ 圖片預覽
+    // =========================
+    // ✅ 截圖預覽功能
+    // 當使用者選擇圖片時，即時顯示預覽圖
+    // =========================
     $('fbShot').addEventListener('change', () => {
       const file = $('fbShot').files?.[0];
+
+      // 沒有選擇檔案 → 隱藏預覽
       if (!file) {
         $('shotWrap').style.display = 'none';
         $('shotPreview').src = '';
         return;
       }
+
+      // 建立暫時的圖片 URL（不需上傳到後端也能預覽）
       const url = URL.createObjectURL(file);
       $('shotPreview').src = url;
       $('shotWrap').style.display = 'block';
     });
 
+    // =========================
+    // ✅ 點擊送出
+    // - 使用 FormData 可同時送文字 + 檔案
+    // - POST 到 /api/feedback
+    // =========================
     $('fbSubmit').addEventListener('click', async () => {
+      // 建立 FormData（表單資料容器）
       const fd = new FormData();
+
+      // 將使用者輸入的內容塞進 FormData
       fd.append('type', $('fbType').value);
       fd.append('title', $('fbTitle').value.trim());
       fd.append('description', $('fbDesc').value.trim());
       fd.append('contact', $('fbContact').value.trim());
 
+      // 若有上傳截圖，加入到 FormData（欄位名 screenshot）
       const file = $('fbShot').files?.[0];
       if (file) fd.append('screenshot', file);
 
+      // 清空提示文字
       $('fbHint').textContent = '';
+
+      // 按鈕鎖住，避免重複送出
       $('fbSubmit').disabled = true;
       $('fbSubmit').textContent = '送出中...';
 
       try {
+        // 呼叫後端 API
         const res = await fetch('/api/feedback', {
           method: 'POST',
           body: fd
         });
 
+        // 嘗試解析 JSON（失敗就回傳固定錯誤）
         const result = await res.json().catch(() => ({ success:false, message:'伺服器回應格式錯誤' }));
 
+        // 如果 HTTP 狀態不 OK 或 success=false → 顯示錯誤訊息
         if (!res.ok || !result.success) {
           $('fbHint').textContent = result.message || '送出失敗，請稍後再試';
           $('fbHint').className = 'fb-hint fb-hint--err';
           return;
         }
 
+        // 成功訊息
         $('fbHint').textContent = result.message || '已送出！';
         $('fbHint').className = 'fb-hint fb-hint--ok';
 
-        // 清空
+        // =========================
+        // 清空表單（送出成功後）
+        // =========================
         $('fbTitle').value = '';
         $('fbDesc').value = '';
         $('fbContact').value = '';
@@ -107,9 +165,11 @@
         $('shotPreview').src = '';
 
       } catch (e) {
+        // 例如網路斷線、fetch 失敗等
         $('fbHint').textContent = '網路錯誤，請稍後再試';
         $('fbHint').className = 'fb-hint fb-hint--err';
       } finally {
+        // 不論成功或失敗都要把按鈕恢復
         $('fbSubmit').disabled = false;
         $('fbSubmit').textContent = '送出';
       }

@@ -1,14 +1,24 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
+    <!-- 網頁編碼，避免中文亂碼 -->
     <meta charset="UTF-8">
+
+    <!-- 網頁標題（顯示在瀏覽器分頁上） -->
     <title>城市餐桌 | 探索全台美食</title>
+
+    <!-- Google 字體：思源宋體（繁中） -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600&display=swap" rel="stylesheet">
+
+    <!-- 全站共用樣式 -->
     <link rel="stylesheet" href="/index.css">
 </head>
 
 <body class="home">
-    <!-- ===== 降臨頁 ===== -->
+    <!-- =========================
+         降臨頁（Landing Page）
+         目的：第一次進站先看到品牌畫面，提示往下滑開始逛
+    ========================== -->
     <section class="landing" id="landing">
         <div class="landing-inner">
             <h1 class="landing-title">城市餐桌</h1>
@@ -18,30 +28,43 @@
             </p>
         </div>
 
+        <!-- 往下探索按鈕（點擊會滑到主內容） -->
         <button class="down-btn" id="downBtn" aria-label="往下探索">
             <div class="arrow"></div>
         </button>
     </section>
 
-    <!-- 滑到這裡顯示主內容 -->
+    <!-- =========================
+         滑動定位點：用來 scrollIntoView
+         點擊往下按鈕會滑到這個錨點
+    ========================== -->
     <div id="mainAnchor"></div>
 
-    <!-- ===== 主內容 ===== -->
+    <!-- =========================
+         主內容區塊（餐廳列表 + 搜尋）
+    ========================== -->
     <div class="main-wrap">
-        <!-- Navbar -->
+        <!-- Navbar：網站導覽列 -->
         <nav class="nav-main">
+            <!-- Logo：點擊回首頁 -->
             <a href="/" class="logo">城市餐桌</a>
 
+            <!-- 右側導覽按鈕 -->
             <div class="nav-actions">
                 <a href="/post" class="nav-link">我要投稿</a>
                 <a href="/feedback" class="nav-link">回報建議</a>
             </div>
         </nav>
 
-        <!-- 搜尋 -->
+        <!-- =========================
+             搜尋表單（GET 送到 /）
+             會把 q/region/city 帶在 query string
+        ========================== -->
         <form action="/" method="get" class="search-bar">
+            <!-- 關鍵字搜尋（EJS：把目前搜尋字串回填到 input） -->
             <input type="text" name="q" value="<%= q %>" placeholder="搜尋餐廳..." class="search-input">
 
+            <!-- 區域下拉選單（EJS：若目前選的是哪個區域就 selected） -->
             <select name="region" id="regionSelect" class="search-select">
                 <option value="">全部區域</option>
                 <option value="北" <%= region==='北'?'selected':'' %>>北部</option>
@@ -51,25 +74,39 @@
                 <option value="外島" <%= region==='外島'?'selected':'' %>>外島</option>
             </select>
 
+            <!-- 城市下拉選單（會由 JS 依照區域動態填入 option） -->
             <select name="city" id="citySelect" class="search-select">
                 <option value="">全部城市</option>
             </select>
 
+            <!-- 送出搜尋 -->
             <button type="submit" class="search-btn">搜尋</button>
         </form>
 
-        <!-- 餐廳列表 -->
+        <!-- =========================
+             餐廳列表（EJS 迴圈：restaurants.forEach）
+             每張卡片可點擊，前往詳情頁 /detail/:id
+        ========================== -->
         <div class="container">
             <div class="grid">
                 <% restaurants.forEach(r => { %>
+                    <!-- 餐廳卡片：點擊導到該餐廳詳情頁 -->
                     <div class="rest-card" onclick="location.href='/detail/<%= r.id %>'">
+                        <!-- 圖片區塊 -->
                         <div class="ig-placeholder">
                             <img src="<%= r.image_url %>" alt="<%= r.name %>">
                         </div>
+
+                        <!-- 文字內容 -->
                         <div class="card-content">
+                            <!-- 標籤：城市/區 -->
                             <span class="tag"><%= r.city %></span>
                             <span class="tag"><%= r.district %></span>
+
+                            <!-- 餐廳名稱 -->
                             <h4><%= r.name %></h4>
+
+                            <!-- 地址 -->
                             <p class="address-text">📍 <%= r.address %></p>
                         </div>
                     </div>
@@ -78,8 +115,14 @@
         </div>
     </div>
 
-    <!-- ===== JS ===== -->
+    <!-- =========================
+         JS 區塊：1) 區域->城市連動 2) 降臨頁顯示控制
+    ========================== -->
     <script>
+        // =========================
+        // 1) 區域 -> 城市對照表
+        // 用來做「區域選單」改變時，自動更新「城市選單」
+        // =========================
         const citiesByRegion = {
             "北": ["台北市","新北市","桃園市","基隆市","新竹市","新竹縣","宜蘭縣"],
             "中": ["台中市","苗栗縣","彰化縣","南投縣","雲林縣"],
@@ -88,44 +131,77 @@
             "外島": ["金門縣","連江縣"]
         };
 
+        // 取得下拉選單 DOM
         const regionSelect = document.getElementById('regionSelect');
         const citySelect = document.getElementById('citySelect');
 
+        /**
+         * 依照目前選擇的「區域」更新「城市」選項
+         * - 先清空舊的 option
+         * - 再把對應區域的城市塞進去
+         * - EJS：如果目前 city 有值，會幫它保留 selected
+         */
         function updateCities() {
             citySelect.innerHTML = '<option value="">全部城市</option>';
             const region = regionSelect.value;
+
+            // 若有選區域，且對照表有該區域，才新增城市
             if (region && citiesByRegion[region]) {
                 citiesByRegion[region].forEach(c => {
+                    // 這行是為了「搜尋後回到頁面」能保持原本選的城市
                     const selected = "<%= city %>" === c ? 'selected' : '';
                     citySelect.innerHTML += `<option value="${c}" ${selected}>${c}</option>`;
                 });
             }
         }
+
+        // 網頁載入後先跑一次（避免 citySelect 一開始是空的）
         updateCities();
+
+        // 當區域改變：清空城市選擇，重新更新城市列表
         regionSelect.addEventListener('change', () => {
             citySelect.value = '';
             updateCities();
         });
 
-        // ===== 降臨頁控制（sessionStorage）=====
+        // =========================
+        // 2) 降臨頁（Landing Page）控制
+        // 用 sessionStorage 記錄「是否看過降臨頁」
+        // - 看過：直接進主內容（不再顯示降臨頁）
+        // - 有搜尋參數：也直接進主內容（避免搜尋結果又被降臨頁擋住）
+        // =========================
         const landing = document.getElementById('landing');
         const downBtn = document.getElementById('downBtn');
         const mainAnchor = document.getElementById('mainAnchor');
         const form = document.querySelector('form[action="/"]');
 
+        // sessionStorage 的 key 名稱
         const LANDING_KEY = 'landingSeen';
+
+        // 是否已看過降臨頁（1 代表看過）
         const seenLanding = sessionStorage.getItem(LANDING_KEY) === '1';
+
+        // 網址是否帶 query（例如 ?q=xxx&region=北）
         const hasQuery = new URLSearchParams(location.search).toString().length > 0;
 
+        /**
+         * 進入主內容模式
+         * - 記錄已看過降臨頁
+         * - 加上 body class 讓 CSS 控制顯示/隱藏
+         */
         function enterMainMode() {
             sessionStorage.setItem(LANDING_KEY, '1');
             document.body.classList.add('show-main');
             document.body.classList.add('no-landing');
         }
 
+        // 若已看過降臨頁，或有搜尋參數 → 直接進主內容
         if (seenLanding || hasQuery) {
             enterMainMode();
         } else {
+            // IntersectionObserver：監控 landing 是否在視窗內
+            // - landing 在視窗內：主內容不要太早出現（移除 show-main）
+            // - landing 滑出視窗：主內容顯示（加入 show-main）
             const io = new IntersectionObserver(([entry]) => {
                 if (entry.isIntersecting) {
                     document.body.classList.remove('show-main');
@@ -133,14 +209,20 @@
                     document.body.classList.add('show-main');
                 }
             }, { threshold: 0.15 });
+
             io.observe(landing);
         }
 
+        // 點擊往下按鈕：
+        // - 進主內容模式
+        // - 平滑滑到主內容的錨點
         downBtn.addEventListener('click', () => {
             enterMainMode();
             mainAnchor.scrollIntoView({ behavior: 'smooth' });
         });
 
+        // 提交搜尋時：也記錄「已看過降臨頁」
+        // 避免搜尋完回來又看到降臨頁
         form.addEventListener('submit', () => {
             sessionStorage.setItem(LANDING_KEY, '1');
         });

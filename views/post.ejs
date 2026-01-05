@@ -1,77 +1,119 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
+    <!-- 網頁編碼，避免中文亂碼 -->
     <meta charset="UTF-8">
+
+    <!-- RWD 響應式設定，讓手機也能正常顯示 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- 網頁標題 -->
     <title>投稿餐廳</title>
+
+    <!-- Google 字體 -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600&display=swap" rel="stylesheet">
+
+    <!-- 共用樣式 -->
     <link rel="stylesheet" href="/index.css">
+
+    <!-- 投稿頁專用樣式 -->
     <link rel="stylesheet" href="/post.css">
 </head>
 
 <body>
+    <!-- 導覽列 -->
     <nav class="nav-page">
+        <!-- 網站 Logo，點擊回首頁 -->
         <a href="/" class="logo">城市餐桌</a>
+
+        <!-- 右側導覽連結 -->
         <div class="nav-actions">
             <a href="/" class="nav-link">回首頁</a>
             <a href="/feedback" class="nav-link">回報建議</a>
         </div>
     </nav>
 
+    <!-- 投稿表單區塊 -->
     <div class="post-box">
         <h2>📮 投稿新餐廳</h2>
 
+        <!-- 餐廳名稱 -->
         <label>餐廳名稱</label>
         <input type="text" id="pName" placeholder="例如：鼎泰豐">
 
+        <!-- 詳細地址 -->
         <label>詳細地址</label>
         <input type="text" id="pAddr" placeholder="例如：台中市北區育才北路69號">
 
+        <!-- 聯絡電話 -->
         <label>聯絡電話</label>
         <input type="text" id="pPhone" placeholder="02-1234-5678">
 
+        <!-- 上傳圖片（檔案） -->
         <label>上傳圖片（選填，5MB內）</label>
         <input type="file" id="pFile" accept="image/*">
+
+        <!-- 圖片預覽區（預設隱藏） -->
         <div class="img-preview-wrap" id="imgWrap" style="display:none;">
             <img id="imgPreview" alt="圖片預覽">
         </div>
 
+        <!-- 圖片網址輸入 -->
         <label>或貼圖片網址（選填）</label>
         <input type="text" id="pImg" placeholder="貼上 jpg/png 圖片連結（如果有上傳圖片，會優先使用上傳的）">
 
+        <!-- 推薦原因 -->
         <label>推薦原因</label>
         <textarea id="pDesc" placeholder="推薦這間餐廳的原因或大概描述"></textarea>
 
+        <!-- 發布按鈕 -->
         <button type="button" onclick="publish()" class="btn-publish">確認發布</button>
     </div>
 
 <script>
-    // 統一把「臺」改成「台」
+    // =========================
+    // 工具函式區
+    // =========================
+
+    /**
+     * 統一地址用字：
+     * 將「臺」轉成「台」，避免資料不一致
+     */
     function toTai(s) {
         return (s || '').replaceAll('臺', '台').trim();
     }
 
-    // 從地址解析 city / district（市+區、縣+鄉/鎮/市）
+    /**
+     * 從地址中解析出「縣市」與「行政區」
+     * 支援：
+     * - xx市xx區
+     * - xx縣xx鄉 / xx鎮 / xx市
+     */
     function parseCityDistrict(addr) {
         addr = toTai(addr);
 
         let city = '';
         let district = '';
 
+        // 如果是「市」
         if (addr.includes('市')) {
             const cityEnd = addr.indexOf('市') + 1;
             city = addr.slice(0, cityEnd);
 
+            // 市底下通常是「區」
             if (addr.includes('區')) {
                 const districtEnd = addr.indexOf('區') + 1;
                 district = addr.slice(cityEnd, districtEnd);
             } else {
                 district = '';
             }
+
+        // 如果是「縣」
         } else if (addr.includes('縣')) {
             const cityEnd = addr.indexOf('縣') + 1;
             city = addr.slice(0, cityEnd);
 
+            // 縣底下可能是 鄉 / 鎮 / 市
             if (addr.includes('鄉')) {
                 district = addr.slice(cityEnd, addr.indexOf('鄉') + 1);
             } else if (addr.includes('鎮')) {
@@ -87,40 +129,55 @@
         return { city, district };
     }
 
-    // 圖片預覽（上傳）
+    // =========================
+    // 圖片上傳預覽
+    // =========================
+
     const fileInput = document.getElementById('pFile');
     const imgWrap = document.getElementById('imgWrap');
     const imgPreview = document.getElementById('imgPreview');
 
+    // 當使用者選擇圖片時即時顯示預覽
     fileInput.addEventListener('change', () => {
         const f = fileInput.files?.[0];
+
+        // 沒選檔案就隱藏預覽
         if (!f) {
             imgWrap.style.display = 'none';
             imgPreview.src = '';
             return;
         }
+
+        // 建立暫時的圖片 URL
         const url = URL.createObjectURL(f);
         imgPreview.src = url;
         imgWrap.style.display = 'block';
     });
 
+    // =========================
+    // 發布投稿
+    // =========================
+
     async function publish() {
         const name = document.getElementById('pName').value.trim();
         let addr = document.getElementById('pAddr').value.trim();
 
+        // 基本欄位檢查
         if (!name || !addr) {
             alert('請至少填寫「餐廳名稱」與「詳細地址」');
             return;
         }
 
+        // 從地址解析縣市與區域
         const { city, district } = parseCityDistrict(addr);
 
+        // 若無法解析縣市，提醒使用者
         if (!city) {
             alert('地址格式看不懂，請包含「xx市/xx縣」例如：台中市北區育才北路69號');
             return;
         }
 
-        //  用 FormData 送出（可同時含文字 + 圖片檔）
+        // 使用 FormData 傳送資料（可包含檔案）
         const fd = new FormData();
         fd.append('name', name);
         fd.append('address', toTai(addr));
@@ -129,13 +186,17 @@
         fd.append('district', district);
         fd.append('description', document.getElementById('pDesc').value.trim());
 
-        // 圖片：上傳 or URL
+        // 圖片來源（檔案 or 網址）
         const file = document.getElementById('pFile').files?.[0];
         const image_url = document.getElementById('pImg').value.trim();
 
-        if (file) fd.append('image', file);              // 後端用 multer 接 image
-        if (image_url) fd.append('image_url', image_url); // 沒上傳時可用網址
+        // 若有上傳檔案 → 使用檔案
+        if (file) fd.append('image', file);
 
+        // 若沒有檔案 → 可使用圖片網址
+        if (image_url) fd.append('image_url', image_url);
+
+        // 呼叫後端 API
         const res = await fetch('/api/restaurants', {
             method: 'POST',
             body: fd
@@ -148,11 +209,13 @@
             result = { success: false, message: '伺服器回應格式錯誤' };
         }
 
+        // 發布失敗處理
         if (!res.ok || !result.success) {
             alert(result.message || '投稿失敗，請稍後再試');
             return;
         }
 
+        // 發布成功
         alert(result.message || '投稿成功！');
         location.href = '/';
     }

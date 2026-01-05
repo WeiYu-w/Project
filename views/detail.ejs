@@ -1,16 +1,31 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
+    <!-- 網頁編碼，避免中文亂碼 -->
     <meta charset="UTF-8">
+
+    <!-- RWD 響應式設定（手機也能正常顯示） -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- EJS：用餐廳名稱當作頁面標題 -->
     <title><%= rest.name %> | 詳情</title>
+
+    <!-- Google 字體（繁中） -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600&display=swap" rel="stylesheet">
+
+    <!-- 共用樣式 -->
     <link rel="stylesheet" href="/index.css">
+
+    <!-- 詳情頁專用樣式 -->
     <link rel="stylesheet" href="/detail.css">
 </head>
 
 <body>
-    <!-- Navbar -->
+    <!-- =========================
+         Navbar：導覽列
+         - Logo：回首頁
+         - 右側：回首頁 / 回報建議
+    ========================== -->
     <nav class="nav-detail">
         <a href="/" class="logo">城市餐桌</a>
 
@@ -20,29 +35,46 @@
         </div>
     </nav>
 
-    <!-- 主內容容器 -->
+    <!-- =========================
+         主內容容器
+    ========================== -->
     <div class="container">
-        <!-- 上半部：圖片 + 餐廳資訊 -->
+        <!-- =========================
+             上半部：圖片 + 餐廳資訊（左右排版）
+        ========================== -->
         <div class="detail-flex">
 
             <!-- 餐廳圖片區 -->
             <div class="detail-image">
+                <!-- EJS：顯示餐廳圖片網址 -->
                 <img src="<%= rest.image_url %>" alt="<%= rest.name %>">
             </div>
 
             <!-- 右側資訊欄 -->
             <div class="info-panel">
+                <!-- 餐廳名稱 -->
                 <h1 class="rest-title"><%= rest.name %></h1>
 
+                <!-- 餐廳描述/推薦原因 -->
                 <p class="description"><%= rest.description %></p>
 
+                <!-- 分隔線 -->
                 <hr class="divider">
 
+                <!-- 地址 -->
                 <p class="meta">📍 地址：<%= rest.address %></p>
+
+                <!-- 電話 -->
                 <p class="meta">📞 電話：<%= rest.phone %></p>
 
-                <!-- 功能按鈕 -->
+                <!-- =========================
+                     功能按鈕區
+                     1) Google 地圖導航
+                     2) 直接撥打電話（手機會啟動通話）
+                ========================== -->
                 <div class="btn-group">
+                    <!-- Google Maps 搜尋：
+                         query 需要 encodeURIComponent，避免地址有空格/特殊字造成網址壞掉 -->
                     <a
                         href="https://www.google.com/maps/search/?api=1&query=<%= encodeURIComponent(rest.address) %>"
                         target="_blank"
@@ -52,6 +84,7 @@
                         地圖導航
                     </a>
 
+                    <!-- tel: 連結：點擊可直接撥打（主要給手機使用） -->
                     <a href="tel:<%= rest.phone %>" class="btn btn-phone">
                         撥打電話
                     </a>
@@ -59,39 +92,65 @@
             </div>
         </div>
 
-        <!-- 留言區 -->
+        <!-- =========================
+             留言區（評論）
+             - 顯示所有留言（倒序：最新在最上面）
+             - 下方輸入框可送出新留言
+        ========================== -->
         <div class="comment-section">
             <h3 class="comment-title">💬 留言評論</h3>
 
+            <!-- 留言清單 -->
             <div id="commentList">
+                <!-- EJS：把 comments 複製一份後 reverse()，避免改到原資料 -->
                 <% ([...rest.comments].reverse()).forEach(c => { %>
                     <div class="comment-item">
+                        <!-- 留言內容 -->
                         <span class="comment-text"><%= c.text %></span>
+
+                        <!-- 留言日期 -->
                         <small class="comment-date"><%= c.date %></small>
                     </div>
                 <% }) %>
             </div>
 
+            <!-- 輸入新留言 -->
             <div class="input-group">
                 <input type="text" id="msg" placeholder="分享你的食記...">
+
+                <!-- 點擊送出會呼叫 sendMsg() -->
                 <button type="button" onclick="sendMsg()" class="btn-send">送出</button>
             </div>
         </div>
     </div>
 
     <script>
+        /**
+         * 送出留言
+         * - 讀取輸入框內容
+         * - POST 到 /api/restaurants/:id/comments
+         * - 成功後清空輸入框並刷新頁面顯示最新留言
+         */
         async function sendMsg() {
             const input = document.getElementById('msg');
+
+            // 取得輸入文字並去除前後空白
             const text = (input.value || '').trim();
+
+            // 若沒輸入內容就不送出
             if (!text) return;
 
+            // 呼叫後端 API 新增留言（JSON 格式）
             await fetch(`/api/restaurants/<%= rest.id %>/comments`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ text })
             });
 
+            // 清空輸入欄位
             input.value = '';
+
+            // 重新載入頁面（讓最新留言出現）
             location.reload();
         }
     </script>
