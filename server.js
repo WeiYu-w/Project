@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const app = express();
 
+
 // ===== 基本設定 =====
 app.set('view engine', 'ejs');
 app.use(express.json());
@@ -66,6 +67,11 @@ app.get('/', (req, res) => {
         city: normalizeCity(city)
     });
 });
+
+// ===== 留言回報/建議功能 =====
+const feedbackRoutes = require('./routes/feedback');
+app.use(feedbackRoutes);
+
 
 // ===== 頁面 =====
 app.get('/post', (req, res) => res.render('post'));

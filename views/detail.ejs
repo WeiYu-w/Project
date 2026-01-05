@@ -2,6 +2,7 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= rest.name %> | 詳情</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/index.css">
@@ -9,54 +10,49 @@
 </head>
 
 <body>
-    <!-- 導覽列，點 logo 回首頁 -->
-    <nav>
+    <!-- Navbar -->
+    <nav class="nav-detail">
         <a href="/" class="logo">城市餐桌</a>
+
+        <div class="nav-actions">
+            <a href="/" class="nav-link">回首頁</a>
+            <a href="/feedback" class="nav-link">回報建議</a>
+        </div>
     </nav>
 
     <!-- 主內容容器 -->
     <div class="container">
-
         <!-- 上半部：圖片 + 餐廳資訊 -->
         <div class="detail-flex">
 
             <!-- 餐廳圖片區 -->
-            <div style="flex:1; min-width:320px; border-radius:20px;
-                        overflow:hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
-                <img src="<%= rest.image_url %>"
-                     alt="<%= rest.name %>"
-                     style="width:100%; display:block;">
+            <div class="detail-image">
+                <img src="<%= rest.image_url %>" alt="<%= rest.name %>">
             </div>
 
             <!-- 右側資訊欄 -->
             <div class="info-panel">
+                <h1 class="rest-title"><%= rest.name %></h1>
 
-                <!-- 餐廳名稱 -->
-                <h1><%= rest.name %></h1>
-
-                <!-- 推薦描述 -->
                 <p class="description"><%= rest.description %></p>
 
-                <!-- 分隔線 -->
-                <hr style="border:0; border-top:1px solid #f2f2f2; margin:20px 0;">
+                <hr class="divider">
 
-                <!-- 地址與電話 -->
-                <p>📍 地址：<%= rest.address %></p>
-                <p>📞 電話：<%= rest.phone %></p>
+                <p class="meta">📍 地址：<%= rest.address %></p>
+                <p class="meta">📞 電話：<%= rest.phone %></p>
 
                 <!-- 功能按鈕 -->
                 <div class="btn-group">
-
-                    <!-- Google 地圖導航 -->
-                    <a href="https://www.google.com/maps/search/?api=1&query=<%= encodeURIComponent(rest.address) %>"
-                       target="_blank"
-                       class="btn btn-map">
+                    <a
+                        href="https://www.google.com/maps/search/?api=1&query=<%= encodeURIComponent(rest.address) %>"
+                        target="_blank"
+                        rel="noopener"
+                        class="btn btn-map"
+                    >
                         地圖導航
                     </a>
 
-                    <!-- 直接撥打電話（手機用） -->
-                    <a href="tel:<%= rest.phone %>"
-                       class="btn btn-phone">
+                    <a href="tel:<%= rest.phone %>" class="btn btn-phone">
                         撥打電話
                     </a>
                 </div>
@@ -65,48 +61,37 @@
 
         <!-- 留言區 -->
         <div class="comment-section">
-            <h3>💬 留言評論</h3>
+            <h3 class="comment-title">💬 留言評論</h3>
 
-            <!-- 留言清單 -->
             <div id="commentList">
-
-                <!-- EJS：倒序顯示留言（最新在最上面） -->
-                <% rest.comments.reverse().forEach(c => { %>
+                <% ([...rest.comments].reverse()).forEach(c => { %>
                     <div class="comment-item">
-                        <%= c.text %>
-                        <small style="float:right;"><%= c.date %></small>
+                        <span class="comment-text"><%= c.text %></span>
+                        <small class="comment-date"><%= c.date %></small>
                     </div>
                 <% }) %>
-
             </div>
 
-            <!-- 留言輸入區 -->
             <div class="input-group">
                 <input type="text" id="msg" placeholder="分享你的食記...">
-                <button onclick="sendMsg()" class="btn-send">送出</button>
+                <button type="button" onclick="sendMsg()" class="btn-send">送出</button>
             </div>
         </div>
     </div>
 
-    <!-- JavaScript -->
     <script>
-        // 送出留言
         async function sendMsg() {
-
-            // 取得輸入的留言文字
-            const text = document.getElementById('msg').value;
-
-            // 如果沒輸入內容就不送出
+            const input = document.getElementById('msg');
+            const text = (input.value || '').trim();
             if (!text) return;
 
-            // 呼叫後端 API，新增留言
             await fetch(`/api/restaurants/<%= rest.id %>/comments`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ text })
             });
 
-            // 重新整理頁面，顯示最新留言
+            input.value = '';
             location.reload();
         }
     </script>

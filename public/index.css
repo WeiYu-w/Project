@@ -1,126 +1,174 @@
 /* =========================
-   全站色彩變數（方便統一管理）
+   色彩變數
    ========================= */
 :root {
-    --sage: #8da399;        /* 主色：鼠尾草綠，整體風格主軸 */
-    --brown: #6b5b52;       /* 深棕色，用於標題文字 */
-    --warm-white: #fdfcf8;  /* 暖白色，作為背景色 */
-    --accent: #d4a373;      /* 點綴色（目前可用於強調元素） */
-    --text: #4a4a4a;        /* 主要文字顏色 */
+    --sage: #8da399;
+    --brown: #6b5b52;
+    --warm-white: #fdfcf8;
+    --accent: #d4a373;
+    --text: #4a4a4a;
 }
 
 /* =========================
-   全站基本設定
+   基本設定
    ========================= */
 body {
-    background-color: var(--warm-white); /* 頁面背景 */
-    color: var(--text);                  /* 預設文字顏色 */
-    font-family: "Noto Serif TC", serif; /* 中文襯線字體 */
-    margin: 0;                           /* 移除瀏覽器預設邊距 */
-    line-height: 1.7;                    /* 行距，提升閱讀性 */
+    background: var(--warm-white);
+    color: var(--text);
+    font-family: "Noto Serif TC", serif;
+    margin: 0;
+    line-height: 1.7;
 }
+
 /* =========================
-   導覽列（Navbar）
+   Navbar
    ========================= */
 nav {
-    background: white;                          /* 導覽列背景 */
-    padding: 20px 50px;                         /* 內距 */
-    display: flex;                              /* 使用 Flex 排版 */
-    justify-content: space-between;             /* 左右分散 */
-    align-items: center;                        /* 垂直置中 */
-    border-bottom: 1px solid rgba(0,0,0,0.05);  /* 底線分隔 */
-    position: sticky;                           /* 捲動時固定在頂部 */
+    background: white;
+    padding: 20px 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    position: sticky;
     top: 0;
-    z-index: 100;                               /* 避免被其他元素蓋住 */
+    z-index: 100;
 }
 
-/* 網站 Logo 樣式 */
+.nav-actions {
+    display: flex;
+    gap: 28px;
+}
+
+/* Logo */
 .logo {
-    font-size: 1.6rem;          /* 字體大小 */
-    color: var(--sage);         /* 主色 */
-    font-weight: 600;           /* 字重 */
-    text-decoration: none;      /* 移除底線 */
-    letter-spacing: 2px;        /* 字距 */
+    font-size: 1.6rem;
+    color: var(--sage);
+    font-weight: 600;
+    text-decoration: none;
+    letter-spacing: 2px;
+}
+
+/* 文字連結 + 底線動畫 */
+.nav-link {
+    position: relative;
+    font-size: 14px;
+    color: var(--sage);
+    text-decoration: none;
+    padding: 4px 2px;
+    letter-spacing: 1px;
+}
+
+.nav-link::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    width: 100%;
+    height: 1.5px;
+    background-color: var(--sage);
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform .3s ease;
+}
+
+.nav-link:hover::after {
+    transform: scaleX(1);
+    transform-origin: left;
 }
 
 /* =========================
-   主要內容容器
+   搜尋列
+   ========================= */
+.search-bar {
+    margin: 24px 0;
+    text-align: center;
+}
+
+.search-input,
+.search-select {
+    padding: 10px 15px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    margin: 0 4px;
+}
+
+.search-btn {
+    padding: 10px 18px;
+    border: none;
+    background: var(--sage);
+    color: white;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+/* =========================
+   餐廳卡片
    ========================= */
 .container {
-    max-width: 1100px;          /* 最大寬度 */
-    margin: 40px auto;          /* 上下間距 + 水平置中 */
-    padding: 0 20px;            /* 手機版留白 */
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 0 20px;
 }
 
-/* =========================
-   餐廳卡片 Grid 排版
-   ========================= */
 .grid {
-    display: grid;                                       /* 使用 Grid */
+    display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    /* 自動排欄，最小 320px，最大 1fr */
-    gap: 35px;                                           /* 卡片間距 */
+    gap: 35px;
 }
 
-/* =========================
-   單一餐廳卡片
-   ========================= */
 .rest-card {
-    background: white;                         /* 卡片背景 */
-    border-radius: 15px;                       /* 圓角 */
-    overflow: hidden;                          /* 超出內容隱藏 */
-    border: 1px solid rgba(0,0,0,0.03);        /* 淡淡邊框 */
-    cursor: pointer;                           /* 滑鼠指標 */
-    transition: 0.3s;                          /* 動畫過渡 */
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    border: 1px solid rgba(0,0,0,0.03);
+    cursor: pointer;
+    transition: 0.3s;
 }
 
-/* 卡片滑鼠懸停效果 */
 .rest-card:hover {
-    transform: translateY(-8px);               /* 微微往上浮 */
-    box-shadow: 0 15px 30px rgba(141, 163, 153, 0.15);
-    /* 陰影營造 IG 網美感 */
+    transform: translateY(-8px);
+    box-shadow: 0 15px 30px rgba(141,163,153,0.15);
 }
 
-/* =========================
-   IG 圖片佔位區
-   ========================= */
 .ig-placeholder {
-    background: #f9f9f9;   /* 圖片未載入前的背景 */
-    min-height: 400px;     /* 固定高度，維持版面 */
+    background: #f9f9f9;
+    height: 250px;
 }
 
-/* =========================
-   卡片文字內容區
-   ========================= */
+.ig-placeholder img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
 .card-content {
-    padding: 20px;         /* 內距 */
+    padding: 20px;
 }
 
-/* 標籤樣式（例如：日式、咖啡廳） */
 .tag {
-    background: #f2f2f2;   /* 淺灰背景 */
-    color: var(--sage);    /* 主色文字 */
-    padding: 4px 10px;     /* 內距 */
-    border-radius: 4px;    /* 小圓角 */
-    font-size: 12px;       /* 小字 */
-    margin-right: 8px;     /* 標籤間距 */
+    background: #f2f2f2;
+    color: var(--sage);
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    margin-right: 8px;
 }
 
-/* 餐廳名稱 */
 h4 {
-    font-size: 1.2rem;     /* 標題大小 */
-    color: var(--brown);   /* 深棕色 */
-    margin: 15px 0 5px;    /* 上下間距 */
+    font-size: 1.2rem;
+    color: var(--brown);
+    margin: 15px 0 5px;
 }
 
-/* 地址文字 */
 .address-text {
-    font-size: 13px;       /* 小字 */
-    color: #999;           /* 淺灰色 */
-    margin: 0;             /* 移除預設間距 */
+    font-size: 13px;
+    color: #999;
+    margin: 0;
 }
+
 /* =========================
-   Landing 降臨頁（滿版動畫）
+   Landing 降臨頁（滿版動畫）- 首頁限定
    ========================= */
 
 /* ✅ 只在首頁：一開始隱藏 nav + 主內容 */
@@ -140,7 +188,7 @@ h4 {
     transform: translateY(0);
 }
 
-/* 降臨頁：滿版（本來就只存在首頁，這段可不加 .home 也行） */
+/* ✅ 只在首頁：降臨頁滿版 + 背景動畫 */
 .home .landing {
     height: 100vh;
     width: 100%;
@@ -170,15 +218,15 @@ h4 {
 }
 @keyframes landing-spin { to { transform: rotate(360deg); } }
 
-.landing-inner {
+/* 中央文字區 */
+.home .landing-inner {
     position: relative;
     text-align: center;
     padding: 0 18px;
     max-width: 760px;
 }
 
-.landing-title {
-    font-family: "Noto Serif TC", serif;
+.home .landing-title {
     font-weight: 600;
     letter-spacing: 2px;
     font-size: clamp(34px, 6vw, 60px);
@@ -189,7 +237,7 @@ h4 {
     animation: landing-fadeUp .9s ease forwards;
 }
 
-.landing-sub {
+.home .landing-sub {
     margin: 0;
     font-size: clamp(14px, 2.4vw, 18px);
     color: var(--text);
@@ -204,8 +252,8 @@ h4 {
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* 下滑箭頭 */
-.down-btn {
+/* 下滑箭頭按鈕 */
+.home .down-btn {
     position: absolute;
     left: 50%;
     bottom: 26px;
@@ -220,12 +268,12 @@ h4 {
     place-items: center;
     transition: transform .2s ease, box-shadow .2s ease;
 }
-.down-btn:hover {
+.home .down-btn:hover {
     transform: translateX(-50%) translateY(-2px);
     box-shadow: 0 12px 30px rgba(141,163,153,.18);
 }
 
-.arrow {
+.home .arrow {
     width: 12px;
     height: 12px;
     border-right: 2px solid var(--brown);
@@ -238,7 +286,7 @@ h4 {
     50% { transform: rotate(45deg) translate(0,4px); }
 }
 
-/* 只在首頁：本分頁已看過降臨頁 → 隱藏 */
+/* ✅ 只在首頁：本分頁已看過降臨頁 → 隱藏 */
 .home.no-landing #landing {
     display: none;
 }

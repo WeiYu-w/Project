@@ -1,49 +1,82 @@
 /* ==============================
+   Post 頁：Navbar 右側連結容器
+   ============================== */
+.nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+/* ==============================
    投稿表單容器
    ============================== */
 .post-box {
-    background: white; /* 白底 */
-    padding: 40px;     /* 內距 40px */
-    border-radius: 25px; /* 圓角 */
-    max-width: 500px;  /* 最大寬度 500px */
-    margin: 50px auto; /* 上下 50px，左右置中 */
-    box-shadow: 0 10px 30px rgba(0,0,0,0.03); /* 輕微陰影 */
+    background: white;
+    padding: 40px;
+    border-radius: 25px;
+    max-width: 520px;
+    margin: 50px auto;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+    border: 1px solid rgba(0,0,0,0.03);
 }
 
 /* 標題 */
-h2 {
-    color: var(--sage);       /* 綠色文字 */
-    text-align: center;       /* 置中 */
-    margin-bottom: 30px;      /* 下方間距 */
+.post-box h2 {
+    color: var(--sage);
+    text-align: center;
+    margin: 0 0 30px 0;
 }
 
-/* 標籤文字 (label) */
-label {
-    display: block;           /* 單行獨立顯示 */
-    margin-bottom: 8px;       /* 與輸入框間距 */
-    font-weight: 600;         /* 粗體 */
-    color: var(--brown);      /* 深咖啡文字 */
+/* 標籤文字 */
+.post-box label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: var(--brown);
 }
 
 /* 輸入框與文字區域 */
-input, textarea {
-    width: 100%;              /* 撐滿父容器 */
-    padding: 12px;            /* 內距 */
-    margin-bottom: 20px;      /* 下方間距 */
-    border: 1px solid #eee;   /* 淺邊框 */
-    border-radius: 10px;      /* 圓角 */
-    box-sizing: border-box;    /* 包含 padding 在內 */
-    background: #fdfcf8;      /* 淺色背景 */
+.post-box input,
+.post-box textarea {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 20px;
+    border: 1px solid #eee;
+    border-radius: 10px;
+    box-sizing: border-box;
+    background: #fdfcf8;
+    outline: none;
+    font-family: "Noto Serif TC", serif;
+}
+
+/* focus：更像你整站風格 */
+.post-box input:focus,
+.post-box textarea:focus {
+    border-color: rgba(141,163,153,.75);
+    box-shadow: 0 0 0 3px rgba(141,163,153,.18);
 }
 
 /* 發布按鈕 */
 .btn-publish {
-    width: 100%;              /* 撐滿表單寬度 */
-    padding: 15px;            /* 內距 */
-    background: var(--sage);  /* 綠色背景 */
-    color: white;             /* 白字 */
-    border: none;             /* 無邊框 */
-    border-radius: 10px;      /* 圓角 */
-    cursor: pointer;          /* 滑鼠變手指 */
-    font-size: 16px;          /* 文字大小 */
+    width: 100%;
+    padding: 15px;
+    background: var(--sage);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: .2s ease;
+}
+
+.btn-publish:hover {
+    filter: brightness(0.95);
+}
+
+/* 提示文字 */
+.post-hint {
+    margin: 14px 0 0 0;
+    font-size: 13px;
+    color: #888;
+    text-align: center;
 }

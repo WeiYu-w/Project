@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>回報建議 | 城市餐桌</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/index.css">
+  <link rel="stylesheet" href="/feedback.css">
+</head>
+
+<body>
+  <nav>
+    <a href="/" class="logo">城市餐桌</a>
+    <div class="nav-actions">
+      <a href="/" class="nav-link">回首頁</a>
+      <a href="/post" class="nav-link">我要投稿</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="fb-card">
+      <h2 class="fb-title">🛠️ 問題回報 / 建議</h2>
+      <p class="fb-sub">如果是 bug，建議附上截圖更好抓問題。</p>
+
+      <label class="fb-label">類型</label>
+      <select id="fbType" class="fb-input">
+        <option value="bug">問題回報（Bug）</option>
+        <option value="suggestion">功能建議（Suggestion）</option>
+        <option value="other">其他</option>
+      </select>
+
+      <label class="fb-label">標題（必填）</label>
+      <input id="fbTitle" class="fb-input" type="text" maxlength="60" placeholder="例如：點回報建議顯示 Cannot GET /feedback">
+
+      <label class="fb-label">內容描述（必填）</label>
+      <textarea id="fbDesc" class="fb-input fb-textarea" maxlength="1000" placeholder="請描述：情境、步驟、預期 vs 實際結果"></textarea>
+
+      <label class="fb-label">Bug 截圖（選填，5MB 內）</label>
+      <input id="fbShot" class="fb-input" type="file" accept="image/*">
+      <div class="shot-preview-wrap" id="shotWrap" style="display:none;">
+        <img id="shotPreview" alt="截圖預覽">
+      </div>
+
+      <label class="fb-label">聯絡方式（選填）</label>
+      <input id="fbContact" class="fb-input" type="text" placeholder="Email / IG（可留空）">
+
+      <button id="fbSubmit" class="fb-btn" type="button">送出</button>
+
+      <p class="fb-hint" id="fbHint"></p>
+    </div>
+  </div>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+
+    // ✅ 圖片預覽
+    $('fbShot').addEventListener('change', () => {
+      const file = $('fbShot').files?.[0];
+      if (!file) {
+        $('shotWrap').style.display = 'none';
+        $('shotPreview').src = '';
+        return;
+      }
+      const url = URL.createObjectURL(file);
+      $('shotPreview').src = url;
+      $('shotWrap').style.display = 'block';
+    });
+
+    $('fbSubmit').addEventListener('click', async () => {
+      const fd = new FormData();
+      fd.append('type', $('fbType').value);
+      fd.append('title', $('fbTitle').value.trim());
+      fd.append('description', $('fbDesc').value.trim());
+      fd.append('contact', $('fbContact').value.trim());
+
+      const file = $('fbShot').files?.[0];
+      if (file) fd.append('screenshot', file);
+
+      $('fbHint').textContent = '';
+      $('fbSubmit').disabled = true;
+      $('fbSubmit').textContent = '送出中...';
+
+      try {
+        const res = await fetch('/api/feedback', {
+          method: 'POST',
+          body: fd
+        });
+
+        const result = await res.json().catch(() => ({ success:false, message:'伺服器回應格式錯誤' }));
+
+        if (!res.ok || !result.success) {
+          $('fbHint').textContent = result.message || '送出失敗，請稍後再試';
+          $('fbHint').className = 'fb-hint fb-hint--err';
+          return;
+        }
+
+        $('fbHint').textContent = result.message || '已送出！';
+        $('fbHint').className = 'fb-hint fb-hint--ok';
+
+        // 清空
+        $('fbTitle').value = '';
+        $('fbDesc').value = '';
+        $('fbContact').value = '';
+        $('fbShot').value = '';
+        $('shotWrap').style.display = 'none';
+        $('shotPreview').src = '';
+
+      } catch (e) {
+        $('fbHint').textContent = '網路錯誤，請稍後再試';
+        $('fbHint').className = 'fb-hint fb-hint--err';
+      } finally {
+        $('fbSubmit').disabled = false;
+        $('fbSubmit').textContent = '送出';
+      }
+    });
+  </script>
+</body>
+</html>

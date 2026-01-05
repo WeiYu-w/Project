@@ -2,13 +2,23 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>投稿餐廳</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/index.css">
     <link rel="stylesheet" href="/post.css">
 </head>
+
 <body>
-    <nav><a href="/" class="logo">城市餐桌</a></nav>
+    <!-- Navbar -->
+    <nav class="nav-page">
+        <a href="/" class="logo">城市餐桌</a>
+
+        <div class="nav-actions">
+            <a href="/" class="nav-link">回首頁</a>
+            <a href="/feedback" class="nav-link">回報建議</a>
+        </div>
+    </nav>
 
     <div class="post-box">
         <h2>📮 投稿新餐廳</h2>
@@ -28,10 +38,11 @@
         <label>推薦原因</label>
         <textarea id="pDesc" placeholder="例如：小籠包爆汁，服務也很好"></textarea>
 
-        <button onclick="publish()" class="btn-publish">確認發布</button>
+        <button type="button" onclick="publish()" class="btn-publish">確認發布</button>
+        <p class="post-hint">地址建議格式：台中市北區育才北路69號 / 宜蘭縣羅東鎮...</p>
     </div>
 
-    <script>
+<script>
     // ✅ 統一把「臺」改成「台」，避免城市比對/搜尋不一致
     function toTai(s) {
         return (s || '').replaceAll('臺', '台').trim();
@@ -54,7 +65,6 @@
                 const districtEnd = addr.indexOf('區') + 1;
                 district = addr.slice(cityEnd, districtEnd);
             } else {
-                // 有些地址不含區（例如只到市），就先留空
                 district = '';
             }
 
@@ -69,7 +79,6 @@
             } else if (addr.includes('鎮')) {
                 district = addr.slice(cityEnd, addr.indexOf('鎮') + 1);
             } else if (addr.slice(cityEnd).includes('市')) {
-                // 注意：縣後面也可能出現「市」（例如 彰化縣員林市...）
                 const sub = addr.slice(cityEnd);
                 district = sub.slice(0, sub.indexOf('市') + 1);
             } else {
@@ -84,16 +93,13 @@
         const name = document.getElementById('pName').value.trim();
         let addr = document.getElementById('pAddr').value.trim();
 
-        // ✅ 前端防呆：至少要有名稱+地址
         if (!name || !addr) {
             alert('請至少填寫「餐廳名稱」與「詳細地址」');
             return;
         }
 
-        // ✅ 解析 city / district（已內建把「臺」轉「台」）
         const { city, district } = parseCityDistrict(addr);
 
-        // ✅ 如果連 city 都抓不到，代表地址格式太怪，直接提示使用者補完整
         if (!city) {
             alert('地址格式看不懂，請包含「xx市/xx縣」例如：台中市北區育才北路69號');
             return;
@@ -115,7 +121,6 @@
             body: JSON.stringify(data)
         });
 
-        // ✅ 不管成功/失敗，都嘗試讀訊息
         let result = {};
         try {
             result = await res.json();
@@ -123,7 +128,6 @@
             result = { success: false, message: '伺服器回應格式錯誤' };
         }
 
-        // ✅ 用 res.ok + success 雙保險（後端回 400 也能正確提示）
         if (!res.ok || !result.success) {
             alert(result.message || '投稿失敗，請稍後再試');
             return;

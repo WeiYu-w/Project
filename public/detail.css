@@ -1,71 +1,180 @@
 /* ==============================
+   詳情頁：Navbar 右側連結容器
+   ============================== */
+.nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+/* ==============================
    上半部圖片 + 資訊區
    ============================== */
 .detail-flex {
-    display: flex;       /* 左右排列圖片和資訊欄 */
-    gap: 40px;           /* 左右間距 40px */
-    margin-top: 20px;    /* 距離上方 20px */
-    flex-wrap: wrap;     /* 當螢幕太小時換行 */
+    display: flex;
+    gap: 40px;
+    margin-top: 20px;
+    flex-wrap: wrap;
 }
 
+.detail-image {
+    flex: 1;
+    min-width: 320px;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    background: #f9f9f9;
+}
+
+.detail-image img {
+    width: 100%;
+    display: block;
+}
+
+/* 右側資訊欄 */
 .info-panel {
-    flex: 1;             /* 自動撐滿剩餘空間 */
-    min-width: 320px;    /* 最小寬度 320px */
-    background: white;   /* 白底 */
-    padding: 40px;       /* 內距 40px */
-    border-radius: 20px; /* 圓角 */
+    flex: 1;
+    min-width: 320px;
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    border: 1px solid rgba(0,0,0,0.03);
 }
 
 /* 餐廳名稱 */
-h1 {
-    font-size: 2.2rem;       /* 字體大小 */
-    color: var(--brown);      /* 使用變數顏色 */
-    margin: 0 0 20px 0;       /* 下方留 20px */
+.rest-title {
+    font-size: 2.2rem;
+    color: var(--brown);
+    margin: 0 0 16px 0;
+}
+
+/* 推薦描述 */
+.description {
+    margin: 0;
+    color: var(--text);
+}
+
+/* 分隔線 */
+.divider {
+    border: 0;
+    border-top: 1px solid #f2f2f2;
+    margin: 20px 0;
+}
+
+/* 地址/電話 */
+.meta {
+    margin: 10px 0;
+    color: var(--text);
 }
 
 /* ==============================
    功能按鈕組
    ============================== */
 .btn-group {
-    display: flex;     /* 左右排列按鈕 */
-    gap: 15px;         /* 按鈕間距 15px */
-    margin-top: 30px;  /* 與上方資訊間距 */
+    display: flex;
+    gap: 15px;
+    margin-top: 30px;
+    flex-wrap: wrap;
 }
 
 .btn {
-    flex: 1;                /* 按鈕平均分配空間 */
-    padding: 14px;          /* 上下左右內距 14px */
-    border-radius: 50px;    /* 圓形按鈕 */
-    text-align: center;     /* 文字置中 */
-    text-decoration: none;  /* 去掉底線 */
-    font-size: 14px;        /* 文字大小 */
-    transition: 0.3s;       /* 滑鼠 hover 時過渡效果 */
+    flex: 1;
+    padding: 14px;
+    border-radius: 50px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 14px;
+    transition: 0.3s;
+    min-width: 140px;
 }
 
-/* 地圖按鈕 */
 .btn-map {
-    background: var(--sage); /* 綠色背景 */
-    color: white;            /* 白字 */
+    background: var(--sage);
+    color: white;
 }
 
-/* 電話按鈕 */
+.btn-map:hover {
+    filter: brightness(0.95);
+}
+
 .btn-phone {
-    border: 1px solid var(--sage); /* 綠色邊框 */
-    color: var(--sage);            /* 綠字 */
+    border: 1px solid var(--sage);
+    color: var(--sage);
+    background: white;
+}
+
+.btn-phone:hover {
+    background: rgba(141,163,153,0.08);
 }
 
 /* ==============================
    留言區
    ============================== */
 .comment-section {
-    margin-top: 50px;      /* 距離上方 50px */
-    padding: 30px;         /* 內距 30px */
-    background: white;     /* 白底 */
-    border-radius: 20px;   /* 圓角 */
+    margin-top: 50px;
+    padding: 30px;
+    background: white;
+    border-radius: 20px;
+    border: 1px solid rgba(0,0,0,0.03);
 }
 
-/* 單筆留言 */
+.comment-title {
+    margin: 0 0 14px 0;
+    color: var(--brown);
+}
+
 .comment-item {
-    padding: 15px 0;           /* 上下內距 15px */
-    border-bottom: 1px solid #f2f2f2; /* 底部分隔線 */
+    padding: 15px 0;
+    border-bottom: 1px solid #f2f2f2;
+    display: flex;
+    gap: 12px;
+    align-items: baseline;
+    justify-content: space-between;
+}
+
+.comment-text {
+    color: var(--text);
+}
+
+.comment-date {
+    color: #999;
+    white-space: nowrap;
+}
+
+/* 留言輸入區 */
+.input-group {
+    display: flex;
+    gap: 12px;
+    margin-top: 18px;
+    flex-wrap: wrap;
+}
+
+.input-group input {
+    flex: 1;
+    min-width: 220px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid #ddd;
+    outline: none;
+    font-family: "Noto Serif TC", serif;
+}
+
+.input-group input:focus {
+    border-color: rgba(141,163,153,.75);
+    box-shadow: 0 0 0 3px rgba(141,163,153,.18);
+}
+
+.btn-send {
+    padding: 12px 16px;
+    border-radius: 12px;
+    border: none;
+    background: var(--sage);
+    color: white;
+    cursor: pointer;
+    font-family: "Noto Serif TC", serif;
+    transition: .2s ease;
+}
+
+.btn-send:hover {
+    filter: brightness(0.95);
 }
