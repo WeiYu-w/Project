@@ -123,22 +123,25 @@ h4 {
    Landing 降臨頁（滿版動畫）
    ========================= */
 
-/* 一開始隱藏 nav + 主內容（等滑到主內容才顯示） */
-nav, .main-wrap {
+/* ✅ 只在首頁：一開始隱藏 nav + 主內容 */
+.home nav,
+.home .main-wrap {
     opacity: 0;
     pointer-events: none;
     transform: translateY(10px);
     transition: .45s ease;
 }
-body.show-main nav,
-body.show-main .main-wrap {
+
+/* ✅ 只在首頁：滑下去後顯示 */
+.home.show-main nav,
+.home.show-main .main-wrap {
     opacity: 1;
     pointer-events: auto;
     transform: translateY(0);
 }
 
-/* 降臨頁：滿版 */
-.landing {
+/* 降臨頁：滿版（本來就只存在首頁，這段可不加 .home 也行） */
+.home .landing {
     height: 100vh;
     width: 100%;
     position: relative;
@@ -153,7 +156,7 @@ body.show-main .main-wrap {
 }
 
 /* 背景流動層 */
-.landing::before {
+.home .landing::before {
     content: "";
     position: absolute;
     inset: -35%;
@@ -201,7 +204,7 @@ body.show-main .main-wrap {
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* 下滑箭頭按鈕 */
+/* 下滑箭頭 */
 .down-btn {
     position: absolute;
     left: 50%;
@@ -221,6 +224,7 @@ body.show-main .main-wrap {
     transform: translateX(-50%) translateY(-2px);
     box-shadow: 0 12px 30px rgba(141,163,153,.18);
 }
+
 .arrow {
     width: 12px;
     height: 12px;
@@ -234,9 +238,7 @@ body.show-main .main-wrap {
     50% { transform: rotate(45deg) translate(0,4px); }
 }
 
-/* 主內容觸發錨點（讓 IntersectionObserver 有目標） */
-#mainAnchor { height: 1px; }
-/* 本分頁已看過降臨頁 → 永久隱藏 */
-body.no-landing #landing {
+/* 只在首頁：本分頁已看過降臨頁 → 隱藏 */
+.home.no-landing #landing {
     display: none;
 }
