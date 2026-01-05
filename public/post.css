@@ -1,15 +1,11 @@
-/* ==============================
-   Post 頁：Navbar 右側連結容器
-   ============================== */
+/* navbar 右側容器（與其他頁一致） */
 .nav-actions {
     display: flex;
     align-items: center;
     gap: 24px;
 }
 
-/* ==============================
-   投稿表單容器
-   ============================== */
+/* 投稿表單容器 */
 .post-box {
     background: white;
     padding: 40px;
@@ -27,7 +23,7 @@
     margin: 0 0 30px 0;
 }
 
-/* 標籤文字 */
+/* label */
 .post-box label {
     display: block;
     margin-bottom: 8px;
@@ -35,7 +31,7 @@
     color: var(--brown);
 }
 
-/* 輸入框與文字區域 */
+/* input / textarea */
 .post-box input,
 .post-box textarea {
     width: 100%;
@@ -49,11 +45,26 @@
     font-family: "Noto Serif TC", serif;
 }
 
-/* focus：更像你整站風格 */
 .post-box input:focus,
 .post-box textarea:focus {
     border-color: rgba(141,163,153,.75);
     box-shadow: 0 0 0 3px rgba(141,163,153,.18);
+}
+
+/* 圖片預覽 */
+.img-preview-wrap {
+    margin: -8px 0 20px 0;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid rgba(0,0,0,0.06);
+    background: white;
+}
+
+.img-preview-wrap img {
+    width: 100%;
+    display: block;
+    max-height: 360px;
+    object-fit: contain;
 }
 
 /* 發布按鈕 */
@@ -73,7 +84,6 @@
     filter: brightness(0.95);
 }
 
-/* 提示文字 */
 .post-hint {
     margin: 14px 0 0 0;
     font-size: 13px;

@@ -10,10 +10,8 @@
 </head>
 
 <body>
-    <!-- Navbar -->
     <nav class="nav-page">
         <a href="/" class="logo">城市餐桌</a>
-
         <div class="nav-actions">
             <a href="/" class="nav-link">回首頁</a>
             <a href="/feedback" class="nav-link">回報建議</a>
@@ -27,13 +25,19 @@
         <input type="text" id="pName" placeholder="例如：鼎泰豐">
 
         <label>詳細地址</label>
-        <input type="text" id="pAddr" placeholder="台北市信義區...">
+        <input type="text" id="pAddr" placeholder="例如：台中市北區育才北路69號">
 
         <label>聯絡電話</label>
         <input type="text" id="pPhone" placeholder="02-1234-5678">
 
-        <label>美食圖片網址</label>
-        <input type="text" id="pImg" placeholder="貼上 jpg/png 圖片連結">
+        <label>上傳圖片（選填，5MB內）</label>
+        <input type="file" id="pFile" accept="image/*">
+        <div class="img-preview-wrap" id="imgWrap" style="display:none;">
+            <img id="imgPreview" alt="圖片預覽">
+        </div>
+
+        <label>或貼圖片網址（選填）</label>
+        <input type="text" id="pImg" placeholder="貼上 jpg/png 圖片連結（如果有上傳圖片，會優先使用上傳的）">
 
         <label>推薦原因</label>
         <textarea id="pDesc" placeholder="例如：小籠包爆汁，服務也很好"></textarea>
@@ -43,37 +47,32 @@
     </div>
 
 <script>
-    // ✅ 統一把「臺」改成「台」，避免城市比對/搜尋不一致
+    // 統一把「臺」改成「台」
     function toTai(s) {
         return (s || '').replaceAll('臺', '台').trim();
     }
 
-    // ✅ 從地址解析出 city / district（支援：市+區、縣+鄉/鎮/市）
+    // 從地址解析 city / district（市+區、縣+鄉/鎮/市）
     function parseCityDistrict(addr) {
         addr = toTai(addr);
 
         let city = '';
         let district = '';
 
-        // ---- 市：例如 台中市北區... / 台北市信義區...
         if (addr.includes('市')) {
             const cityEnd = addr.indexOf('市') + 1;
             city = addr.slice(0, cityEnd);
 
-            // 市底下通常是「區」
             if (addr.includes('區')) {
                 const districtEnd = addr.indexOf('區') + 1;
                 district = addr.slice(cityEnd, districtEnd);
             } else {
                 district = '';
             }
-
-        // ---- 縣：例如 宜蘭縣羅東鎮... / 南投縣埔里鎮... / 花蓮縣吉安鄉...
         } else if (addr.includes('縣')) {
             const cityEnd = addr.indexOf('縣') + 1;
             city = addr.slice(0, cityEnd);
 
-            // 縣底下可能是「鄉 / 鎮 / 市」
             if (addr.includes('鄉')) {
                 district = addr.slice(cityEnd, addr.indexOf('鄉') + 1);
             } else if (addr.includes('鎮')) {
@@ -88,6 +87,23 @@
 
         return { city, district };
     }
+
+    // 圖片預覽（上傳）
+    const fileInput = document.getElementById('pFile');
+    const imgWrap = document.getElementById('imgWrap');
+    const imgPreview = document.getElementById('imgPreview');
+
+    fileInput.addEventListener('change', () => {
+        const f = fileInput.files?.[0];
+        if (!f) {
+            imgWrap.style.display = 'none';
+            imgPreview.src = '';
+            return;
+        }
+        const url = URL.createObjectURL(f);
+        imgPreview.src = url;
+        imgWrap.style.display = 'block';
+    });
 
     async function publish() {
         const name = document.getElementById('pName').value.trim();
@@ -105,20 +121,25 @@
             return;
         }
 
-        const data = {
-            name,
-            address: toTai(addr),
-            phone: document.getElementById('pPhone').value.trim(),
-            city,
-            district,
-            image_url: document.getElementById('pImg').value.trim(),
-            description: document.getElementById('pDesc').value.trim()
-        };
+        //  用 FormData 送出（可同時含文字 + 圖片檔）
+        const fd = new FormData();
+        fd.append('name', name);
+        fd.append('address', toTai(addr));
+        fd.append('phone', document.getElementById('pPhone').value.trim());
+        fd.append('city', city);
+        fd.append('district', district);
+        fd.append('description', document.getElementById('pDesc').value.trim());
+
+        // 圖片：上傳 or URL
+        const file = document.getElementById('pFile').files?.[0];
+        const image_url = document.getElementById('pImg').value.trim();
+
+        if (file) fd.append('image', file);              // 後端用 multer 接 image
+        if (image_url) fd.append('image_url', image_url); // 沒上傳時可用網址
 
         const res = await fetch('/api/restaurants', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
+            body: fd
         });
 
         let result = {};
