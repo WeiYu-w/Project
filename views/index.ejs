@@ -7,43 +7,81 @@
     <link rel="stylesheet" href="/index.css">
 </head>
 <body>
-    <!-- 導覽列 -->
-    <nav>
-        <a href="/" class="logo">城市餐桌</a>
-        <a href="/post"
-           style="background:var(--sage); color:white; padding:8px 20px;
-                  border-radius:50px; text-decoration:none; font-size:14px;">
-            我要投稿
-        </a>
-    </nav>
+    <!-- ✅ 降臨頁 -->
+    <section class="landing" id="landing">
+        <div class="landing-inner">
+            <h1 class="landing-title">城市餐桌</h1>
+            <p class="landing-sub">
+                探索全台美食靈感，收藏你的下一間口袋名單。<br />
+                往下滑開始逛吧。
+            </p>
+        </div>
 
-    <!-- 搜索 -->
-    <form action="/" method="get" style="margin:20px 0; text-align:center;">
-        <!-- 關鍵字搜尋 -->
-        <input type="text" name="q" value="<%= q %>" placeholder="搜尋餐廳..." style="padding:10px 15px; width:200px; border-radius:10px; border:1px solid #ccc;">
-
-        <!-- 區域選單 -->
-        <select name="region" id="regionSelect" style="padding:10px 15px; border-radius:10px; border:1px solid #ccc;">
-            <option value="">全部區域</option>
-            <option value="北" <%= region==='北'?'selected':'' %>>北部</option>
-            <option value="中" <%= region==='中'?'selected':'' %>>中部</option>
-            <option value="南" <%= region==='南'?'selected':'' %>>南部</option>
-            <option value="東" <%= region==='東'?'selected':'' %>>東部</option>
-            <option value="外島" <%= region==='外島'?'selected':'' %>>外島</option>
-        </select>
-
-        <!-- 城市下拉 -->
-        <select name="city" id="citySelect" style="padding:10px 15px; border-radius:10px; border:1px solid #ccc;">
-            <option value="">全部城市</option>
-        </select>
-
-        <button type="submit" style="padding:10px 15px; border:none; background:var(--sage); color:white; border-radius:10px; cursor:pointer;">
-            搜尋
+        <button class="down-btn" id="downBtn" aria-label="往下探索">
+            <div class="arrow"></div>
         </button>
-    </form>
+    </section>
 
-    <!-- JS: 根據區域更新城市 -->
+    <!-- 滑到這裡才顯示 nav + 主內容 -->
+    <div id="mainAnchor"></div>
+
+    <!-- 主內容（包住 nav + 原本內容） -->
+    <div class="main-wrap">
+        <!-- 導覽列 -->
+        <nav>
+            <a href="/" class="logo">城市餐桌</a>
+            <a href="/post"
+               style="background:var(--sage); color:white; padding:8px 20px;
+                      border-radius:50px; text-decoration:none; font-size:14px;">
+                我要投稿
+            </a>
+        </nav>
+
+        <!-- 搜索 -->
+        <form action="/" method="get" style="margin:20px 0; text-align:center;">
+            <input type="text" name="q" value="<%= q %>" placeholder="搜尋餐廳..." style="padding:10px 15px; width:200px; border-radius:10px; border:1px solid #ccc;">
+
+            <select name="region" id="regionSelect" style="padding:10px 15px; border-radius:10px; border:1px solid #ccc;">
+                <option value="">全部區域</option>
+                <option value="北" <%= region==='北'?'selected':'' %>>北部</option>
+                <option value="中" <%= region==='中'?'selected':'' %>>中部</option>
+                <option value="南" <%= region==='南'?'selected':'' %>>南部</option>
+                <option value="東" <%= region==='東'?'selected':'' %>>東部</option>
+                <option value="外島" <%= region==='外島'?'selected':'' %>>外島</option>
+            </select>
+
+            <select name="city" id="citySelect" style="padding:10px 15px; border-radius:10px; border:1px solid #ccc;">
+                <option value="">全部城市</option>
+            </select>
+
+            <button type="submit" style="padding:10px 15px; border:none; background:var(--sage); color:white; border-radius:10px; cursor:pointer;">
+                搜尋
+            </button>
+        </form>
+
+        <!-- 主餐廳列表 -->
+        <div class="container">
+            <div class="grid">
+                <% restaurants.forEach(r => { %>
+                    <div class="rest-card" onclick="location.href='/detail/<%= r.id %>'">
+                        <div class="ig-placeholder" style="height:250px;">
+                            <img src="<%= r.image_url %>" alt="<%= r.name %>" style="width:100%; height:100%; object-fit:cover;">
+                        </div>
+                        <div class="card-content">
+                            <span class="tag"><%= r.city %></span>
+                            <span class="tag"><%= r.district %></span>
+                            <h4><%= r.name %></h4>
+                            <p class="address-text">📍 <%= r.address %></p>
+                        </div>
+                    </div>
+                <% }) %>
+            </div>
+        </div>
+    </div>
+
+    <!-- JS：城市選單 + 降臨頁控制 -->
     <script>
+        // ===== 原本的城市下拉 =====
         const citiesByRegion = {
             "北": ["台北市","新北市","桃園市","基隆市","新竹市","新竹縣","宜蘭縣"],
             "中": ["台中市","苗栗縣","彰化縣","南投縣","雲林縣"],
@@ -51,7 +89,6 @@
             "東": ["花蓮縣","台東縣"],
             "外島": ["金門縣","連江縣"]
         };
-
         const regionSelect = document.getElementById('regionSelect');
         const citySelect = document.getElementById('citySelect');
 
@@ -61,36 +98,65 @@
             if(region && citiesByRegion[region]) {
                 citiesByRegion[region].forEach(c => {
                     const selected = "<%= city %>" === c ? 'selected' : '';
-                    const option = `<option value="${c}" ${selected}>${c}</option>`;
-                    citySelect.innerHTML += option;
+                    citySelect.innerHTML += `<option value="${c}" ${selected}>${c}</option>`;
                 });
             }
         }
-
         updateCities();
         regionSelect.addEventListener('change', () => {
             citySelect.value = '';
             updateCities();
         });
-    </script>
 
-    <!-- 主餐廳列表 -->
-    <div class="container">
-        <div class="grid">
-            <% restaurants.forEach(r => { %>
-                <div class="rest-card" onclick="location.href='/detail/<%= r.id %>'">
-                    <div class="ig-placeholder" style="height:250px;">
-                        <img src="<%= r.image_url %>" alt="<%= r.name %>" style="width:100%; height:100%; object-fit:cover;">
-                    </div>
-                    <div class="card-content">
-                        <span class="tag"><%= r.city %></span>
-                        <span class="tag"><%= r.district %></span>
-                        <h4><%= r.name %></h4>
-                        <p class="address-text">📍 <%= r.address %></p>
-                    </div>
-                </div>
-            <% }) %>
-        </div>
-    </div>
+        // ===== 降臨頁控制 =====
+        const landing = document.getElementById('landing');
+        const downBtn = document.getElementById('downBtn');
+        const mainAnchor = document.getElementById('mainAnchor');
+        const form = document.querySelector('form[action="/"]');
+        // sessionStorage key
+        const LANDING_KEY = 'landingSeen';
+
+        // 是否本分頁已看過降臨頁
+        const seenLanding = sessionStorage.getItem(LANDING_KEY) === '1';
+
+// 是否帶查詢參數（搜尋後）
+const hasQuery = new URLSearchParams(location.search).toString().length > 0;
+
+// 進入主內容模式
+function enterMainMode() {
+    sessionStorage.setItem(LANDING_KEY, '1');   // 記住本分頁已看過
+    document.body.classList.add('show-main');   // 顯示 nav + 主內容
+    document.body.classList.add('no-landing');  // 隱藏降臨頁
+}
+
+// 👉 已看過降臨頁 或 搜尋後進來 → 直接顯示主內容
+if (seenLanding || hasQuery) {
+    enterMainMode();
+} else {
+    // 👉 第一次進來才啟用 IntersectionObserver
+    const io = new IntersectionObserver(([entry]) => {
+        if (entry.isIntersecting) {
+            document.body.classList.remove('show-main');
+        } else {
+            document.body.classList.add('show-main');
+        }
+    }, { threshold: 0.15 });
+
+    io.observe(landing);
+}
+
+// 點箭頭：進主內容 + 滑到內容
+downBtn.addEventListener('click', () => {
+    enterMainMode();
+    mainAnchor.scrollIntoView({ behavior: 'smooth' });
+});
+
+// 搜尋送出：記住本分頁已看過降臨頁
+form.addEventListener('submit', () => {
+    sessionStorage.setItem(LANDING_KEY, '1');
+});
+
+    </script>
 </body>
+
 </html>

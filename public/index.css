@@ -19,7 +19,6 @@ body {
     margin: 0;                           /* 移除瀏覽器預設邊距 */
     line-height: 1.7;                    /* 行距，提升閱讀性 */
 }
-
 /* =========================
    導覽列（Navbar）
    ========================= */
@@ -119,4 +118,125 @@ h4 {
     font-size: 13px;       /* 小字 */
     color: #999;           /* 淺灰色 */
     margin: 0;             /* 移除預設間距 */
+}
+/* =========================
+   Landing 降臨頁（滿版動畫）
+   ========================= */
+
+/* 一開始隱藏 nav + 主內容（等滑到主內容才顯示） */
+nav, .main-wrap {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(10px);
+    transition: .45s ease;
+}
+body.show-main nav,
+body.show-main .main-wrap {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+}
+
+/* 降臨頁：滿版 */
+.landing {
+    height: 100vh;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    display: grid;
+    place-items: center;
+    background:
+        radial-gradient(circle at 20% 20%, rgba(141,163,153,.35), transparent 45%),
+        radial-gradient(circle at 80% 30%, rgba(212,163,115,.22), transparent 45%),
+        radial-gradient(circle at 50% 80%, rgba(107,91,82,.14), transparent 55%),
+        var(--warm-white);
+}
+
+/* 背景流動層 */
+.landing::before {
+    content: "";
+    position: absolute;
+    inset: -35%;
+    background: conic-gradient(from 180deg,
+        rgba(141,163,153,.18),
+        rgba(0,0,0,0),
+        rgba(141,163,153,.18));
+    filter: blur(45px);
+    opacity: .55;
+    animation: landing-spin 12s linear infinite;
+}
+@keyframes landing-spin { to { transform: rotate(360deg); } }
+
+.landing-inner {
+    position: relative;
+    text-align: center;
+    padding: 0 18px;
+    max-width: 760px;
+}
+
+.landing-title {
+    font-family: "Noto Serif TC", serif;
+    font-weight: 600;
+    letter-spacing: 2px;
+    font-size: clamp(34px, 6vw, 60px);
+    margin: 0 0 12px 0;
+    color: var(--sage);
+    opacity: 0;
+    transform: translateY(12px);
+    animation: landing-fadeUp .9s ease forwards;
+}
+
+.landing-sub {
+    margin: 0;
+    font-size: clamp(14px, 2.4vw, 18px);
+    color: var(--text);
+    line-height: 1.7;
+    opacity: 0;
+    transform: translateY(10px);
+    animation: landing-fadeUp .9s ease forwards;
+    animation-delay: .12s;
+}
+
+@keyframes landing-fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* 下滑箭頭按鈕 */
+.down-btn {
+    position: absolute;
+    left: 50%;
+    bottom: 26px;
+    transform: translateX(-50%);
+    width: 54px;
+    height: 54px;
+    border-radius: 999px;
+    border: 1px solid rgba(0,0,0,.12);
+    background: rgba(255,255,255,.9);
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    transition: transform .2s ease, box-shadow .2s ease;
+}
+.down-btn:hover {
+    transform: translateX(-50%) translateY(-2px);
+    box-shadow: 0 12px 30px rgba(141,163,153,.18);
+}
+.arrow {
+    width: 12px;
+    height: 12px;
+    border-right: 2px solid var(--brown);
+    border-bottom: 2px solid var(--brown);
+    transform: rotate(45deg);
+    animation: landing-bounce 1.25s ease-in-out infinite;
+}
+@keyframes landing-bounce {
+    0%, 100% { transform: rotate(45deg) translate(0,0); }
+    50% { transform: rotate(45deg) translate(0,4px); }
+}
+
+/* 主內容觸發錨點（讓 IntersectionObserver 有目標） */
+#mainAnchor { height: 1px; }
+/* 本分頁已看過降臨頁 → 永久隱藏 */
+body.no-landing #landing {
+    display: none;
 }
