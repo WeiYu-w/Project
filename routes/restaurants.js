@@ -43,6 +43,13 @@ const saveData = (data) => fs.writeFileSync(DATA_PATH, JSON.stringify(data, null
 // 統一「臺」改成「台」，避免資料不一致
 const toTai = (s = '') => String(s).replaceAll('臺', '台').trim();
 
+// ✅ 讓比對更穩：去空白 + 統一大小寫（名稱用）
+// （不一定要，但有的同學會打「 鼎泰豐 」或大小寫不一致）
+const normalizeName = (s = '') => String(s).trim().toLowerCase();
+
+// ✅ 讓地址比對更穩：統一「臺/台」+ 去空白（地址用）
+const normalizeAddress = (s = '') => toTai(s).replace(/\s+/g, '');
+
 // =========================
 // multer 設定：只收圖片，<= 5MB
 // =========================
@@ -81,7 +88,7 @@ const upload = multer({
 });
 
 // =========================
-// ✅ 新增餐廳（POST /api/restaurants）
+// 新增餐廳（POST /api/restaurants）
 // 支援兩種圖片來源：
 // 1) image：上傳檔案（multer 接）
 // 2) image_url：貼網址（文字）
@@ -120,6 +127,30 @@ router.post('/', upload.single('image'), (req, res) => {
       });
     }
 
+    // =========================
+    // 重複投稿防呆
+    // 規則：餐廳「名稱 + 地址」一樣，就視為同一間
+    // （會先把 台/臺、空白、大小寫 統一後再比對）
+    // =========================
+    const newNameKey = normalizeName(name);
+    const newAddrKey = normalizeAddress(address);
+
+    const isDuplicate = data.some(r => {
+      const oldNameKey = normalizeName(r.name || '');
+      const oldAddrKey = normalizeAddress(r.address || '');
+      return oldNameKey === newNameKey && oldAddrKey === newAddrKey;
+    });
+
+    if (isDuplicate) {
+      // 如果重複但剛存了檔 → 刪掉避免垃圾檔
+      if (req.file?.path && fs.existsSync(req.file.path)) fs.unlinkSync(req.file.path);
+
+      return res.status(409).json({
+        success: false,
+        message: '這間餐廳已經被投稿過了（請勿重複投稿）'
+      });
+    }
+
     // 組出新餐廳資料
     const newRest = {
       id: Date.now().toString(),   // 用時間戳當 id（簡單做法）
@@ -148,10 +179,7 @@ router.post('/', upload.single('image'), (req, res) => {
 });
 
 // =========================
-// ✅ 上傳錯誤統一處理（middleware）
-// 常見：
-// - 檔案太大（超過 5MB）
-// - 不是圖片（fileFilter 擋掉）
+// 上傳錯誤統一處理（middleware）
 // =========================
 router.use((err, req, res, next) => {
   if (err) {
